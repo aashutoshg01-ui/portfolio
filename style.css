@@ -369,7 +369,7 @@ nav.scrolled {
 
 .hero-name {
   font-size: clamp(3rem, 7vw, 6rem);
-  color: var(--text);
+  color: #00aaff;   /* 🔥 blue */
 }
 
 body {
