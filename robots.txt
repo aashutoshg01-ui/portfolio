@@ -1,0 +1,8 @@
+# robots.txt — Aashutosh Kumar Gupta Portfolio
+# Allow all search engine crawlers
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://aashutoshkumargupta.netlify.app/sitemap.xml
