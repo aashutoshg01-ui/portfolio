@@ -1,8 +1,8 @@
 /* ============================================================
    AASHUTOSH KUMAR GUPTA — PORTFOLIO
-   style.css  ·  Premium Enhancement Edition
+   style.css  ·  Production-Ready Edition
    ============================================================
-   Enhancements (zero HTML layout changes):
+   Original Enhancements:
    ✦ Scroll progress indicator
    ✦ Sticky glass navbar with blur + underline slide
    ✦ Glowing hero title + shimmer sweep
@@ -14,6 +14,19 @@
    ✦ Reveal animations — staggered
    ✦ Glass-morphism contact form
    ✦ Micro-interactions throughout
+
+   Additional (Production Layer):
+   ✦ Typing cursor animation (hero headline)
+   ✦ Back-to-top button styles
+   ✦ Mobile menu slide + stagger animation
+   ✦ Hamburger → X morph on open
+   ✦ Contact form validation states (error / success)
+   ✦ "Currently Learning" section
+   ✦ Smooth scroll padding for fixed navbar
+   ✦ Focus-visible accessibility rings
+   ✦ Selection highlight styling
+   ✦ Print media query (resume-friendly)
+   ✦ Additional responsive polish
    ============================================================ */
 
 
@@ -1173,4 +1186,345 @@ footer {
     transition-duration:  .01ms !important;
     animation-iteration-count: 1 !important;
   }
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   21. SCROLL PADDING — offset for fixed navbar
+   ══════════════════════════════════════════════════════════ */
+html {
+  scroll-padding-top: 88px; /* navbar height + buffer */
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   22. TEXT SELECTION
+   ══════════════════════════════════════════════════════════ */
+::selection {
+  background: var(--gold-dim);
+  color:      var(--gold2);
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   23. FOCUS-VISIBLE ACCESSIBILITY RINGS
+   ══════════════════════════════════════════════════════════ */
+:focus-visible {
+  outline:        2px solid var(--gold);
+  outline-offset: 3px;
+}
+/* Remove for mouse users */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   24. TYPING CURSOR (hero headline)  ✦
+   Script adds / removes text — cursor blinks via CSS only
+   ══════════════════════════════════════════════════════════ */
+.hero-headline::after {
+  content:    '|';
+  color:      var(--gold2);
+  font-weight: 300;
+  margin-left: 2px;
+  animation:  cursorBlink 1.05s step-start infinite;
+}
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   25. BACK-TO-TOP BUTTON  ✦
+   Base styles — JS sets opacity/transform dynamically
+   ══════════════════════════════════════════════════════════ */
+#btt {
+  /* Injected via JS — these act as a style reset safety net */
+  font-family: var(--font-body) !important;
+}
+/* Ensure consistent rendering across browsers */
+#btt:focus-visible {
+  outline:        2px solid var(--gold3);
+  outline-offset: 3px;
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   26. MOBILE MENU — ENHANCED TRANSITIONS  ✦
+   ══════════════════════════════════════════════════════════ */
+
+/* Slide in from right instead of just appearing */
+.mobile-menu {
+  opacity:    0;
+  transform:  translateX(100%);
+  transition: opacity .35s var(--ease-out),
+              transform .38s var(--ease-out);
+  /* Override display:none with visibility so transition works */
+  display:        flex !important;
+  visibility:     hidden;
+  pointer-events: none;
+}
+.mobile-menu.open {
+  opacity:        1;
+  transform:      translateX(0);
+  visibility:     visible;
+  pointer-events: auto;
+}
+
+/* Staggered link entrance when menu opens */
+.mobile-menu a {
+  opacity:   0;
+  transform: translateY(18px);
+  transition: opacity .32s var(--ease-out),
+              transform .32s var(--ease-out),
+              color .2s,
+              letter-spacing .22s;
+}
+.mobile-menu.open a:nth-child(2) { opacity: 1; transform: translateY(0); transition-delay: .08s; }
+.mobile-menu.open a:nth-child(3) { opacity: 1; transform: translateY(0); transition-delay: .14s; }
+.mobile-menu.open a:nth-child(4) { opacity: 1; transform: translateY(0); transition-delay: .20s; }
+.mobile-menu.open a:nth-child(5) { opacity: 1; transform: translateY(0); transition-delay: .26s; }
+.mobile-menu.open a:nth-child(6) { opacity: 1; transform: translateY(0); transition-delay: .32s; }
+.mobile-menu.open a:nth-child(7) { opacity: 1; transform: translateY(0); transition-delay: .38s; }
+
+/* Hamburger → X morph */
+.hamburger.active span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.hamburger.active span:nth-child(2) {
+  opacity:   0;
+  transform: scaleX(0);
+}
+.hamburger.active span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+.hamburger span {
+  transition: transform .32s var(--ease-spring),
+              opacity   .22s ease,
+              background .2s;
+}
+.hamburger:hover span { background: var(--gold2); }
+
+
+/* ══════════════════════════════════════════════════════════
+   27. CONTACT FORM — VALIDATION STATES  ✦
+   ══════════════════════════════════════════════════════════ */
+
+/* Error state on input */
+.form-group input.error,
+.form-group textarea.error {
+  border-color: #e05252 !important;
+  background:   rgba(224, 82, 82, .06) !important;
+  box-shadow:   0 0 0 3px rgba(224,82,82,.12) !important;
+}
+
+/* Success state on input */
+.form-group input.success,
+.form-group textarea.success {
+  border-color: #4ade80 !important;
+  background:   rgba(74,222,128,.05) !important;
+}
+
+/* Inline error message */
+.field-error {
+  font-family: var(--font-mono);
+  font-size:   .68rem;
+  color:       #e05252;
+  letter-spacing: .06em;
+  margin-top:  4px;
+  display:     block;
+  animation:   fadeUp .22s ease forwards;
+}
+
+/* Submit button states (JS overrides inline, these are fallbacks) */
+.form-submit:disabled {
+  opacity: .8;
+  cursor:  not-allowed;
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   28. "CURRENTLY LEARNING" SECTION  ✦
+   Add <section id="learning"> to HTML to activate
+   ══════════════════════════════════════════════════════════ */
+#learning { background: var(--bg); }
+
+.learning-grid {
+  display:               grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap:                   20px;
+}
+
+.learning-card {
+  background:  var(--surface);
+  border:      1px solid var(--border2);
+  padding:     28px 24px;
+  position:    relative;
+  overflow:    hidden;
+  transition:  border-color .3s, transform .35s var(--ease-spring), box-shadow .3s;
+}
+.learning-card::before {
+  content:          '';
+  position:         absolute;
+  bottom:           0; left: 0; right: 0; height: 2px;
+  background:       linear-gradient(90deg, transparent, var(--gold2), transparent);
+  transform:        scaleX(0);
+  transition:       transform .35s var(--ease-out);
+}
+.learning-card:hover {
+  border-color: var(--border);
+  transform:    translateY(-5px);
+  box-shadow:   0 12px 40px rgba(0,0,0,.32);
+}
+.learning-card:hover::before { transform: scaleX(1); }
+
+.learning-icon {
+  font-size:     1.6rem;
+  margin-bottom: 14px;
+  display:       block;
+  transition:    transform .3s var(--ease-spring);
+}
+.learning-card:hover .learning-icon { transform: scale(1.14) translateY(-2px); }
+
+.learning-title {
+  font-size:     .88rem;
+  font-weight:   600;
+  margin-bottom: 6px;
+  color:         var(--text);
+}
+.learning-desc {
+  font-size:   .78rem;
+  color:       var(--text3);
+  line-height: 1.65;
+}
+
+/* Progress ring label */
+.learning-progress {
+  display:        flex;
+  align-items:    center;
+  gap:            8px;
+  margin-top:     14px;
+  font-family:    var(--font-mono);
+  font-size:      .66rem;
+  color:          var(--gold);
+  letter-spacing: .1em;
+}
+.learning-progress-track {
+  flex:            1;
+  height:          2px;
+  background:      rgba(255,255,255,.06);
+  border-radius:   1px;
+  overflow:        hidden;
+}
+.learning-progress-fill {
+  height:           100%;
+  background:       linear-gradient(90deg, var(--gold), var(--gold2));
+  border-radius:    1px;
+  transform:        scaleX(0);
+  transform-origin: left;
+  transition:       transform 1.1s var(--ease-out);
+  box-shadow:       0 0 6px rgba(201,168,76,.4);
+}
+.learning-card.visible .learning-progress-fill {
+  transform: scaleX(1);
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   29. PROJECT CARD 3D TILT — transform-style support
+   ══════════════════════════════════════════════════════════ */
+.projects-grid {
+  perspective: 1200px;
+}
+.project-card {
+  transform-style: preserve-3d;
+  will-change:     transform;
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   30. FOOTER — IMPROVED LAYOUT
+   ══════════════════════════════════════════════════════════ */
+
+/* Subtle top gradient line on footer */
+footer {
+  position:   relative;
+}
+footer::before {
+  content:    '';
+  position:   absolute;
+  top:        0; left: 5%; right: 5%;
+  height:     1px;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+}
+
+/* Made-with line */
+.footer-made {
+  font-family:    var(--font-mono);
+  font-size:      .68rem;
+  color:          var(--text3);
+  letter-spacing: .08em;
+}
+.footer-made span { color: var(--gold); }
+
+
+/* ══════════════════════════════════════════════════════════
+   31. MOBILE MENU — additional responsive fix for nav
+   ══════════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  /* Ensure hamburger animates active state visually */
+  .hamburger { z-index: 101; position: relative; }
+
+  /* Keep back-to-top accessible on mobile */
+  #btt {
+    bottom: 20px !important;
+    right:  20px !important;
+    width:  40px !important;
+    height: 40px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .learning-grid { grid-template-columns: 1fr; }
+
+  /* Tighten hero on very small screens */
+  .hero-name { font-size: clamp(2.4rem, 11vw, 4rem); }
+  .hero-btns a { width: 100%; text-align: center; }
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   32. PRINT STYLES — clean layout if user prints page
+   ══════════════════════════════════════════════════════════ */
+@media print {
+  /* Hide interactive / decorative elements */
+  nav, .mobile-menu, #btt,
+  .hero-float-card, .hero-socials,
+  .hero-bg, .hero-grid,
+  body::before, body::after { display: none !important; }
+
+  body {
+    background: #fff;
+    color:      #111;
+    font-size:  11pt;
+  }
+
+  section        { padding: 24px 0; break-inside: avoid; }
+  .max-container { max-width: 100%; }
+
+  a { color: inherit; text-decoration: underline; }
+
+  .section-title { font-size: 18pt; }
+  .stat-num      { color: #222; }
+
+  /* Show links as text */
+  a[href]::after {
+    content: ' (' attr(href) ')';
+    font-size: 8pt;
+    color: #666;
+  }
+  a[href^="#"]::after,
+  a[href^="mailto"]::after { content: ''; }
 }
