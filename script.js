@@ -1,354 +1,346 @@
 /* ============================================================
    AASHUTOSH KUMAR GUPTA — Portfolio
-   script.js · Production-Ready Interactive Layer
+   script.js  ·  Production v3
    ============================================================
    Features:
+   ✦ EmailJS contact form (sends to aashutoshg01@gmail.com)
    ✦ Scroll progress bar
-   ✦ Glass navbar + active section highlight
-   ✦ Scroll-reveal animations (staggered fade-up)
+   ✦ Sticky glass navbar
+   ✦ Active nav link highlight
+   ✦ Scroll-reveal animations
    ✦ Skill bar fill on scroll
    ✦ Hero typing animation
    ✦ Back-to-top button
-   ✦ Mobile menu
-   ✦ Smooth scroll (with offset for navbar)
-   ✦ Lightweight — zero external dependencies
+   ✦ Mobile menu with body-scroll lock
+   ✦ Project card tilt (desktop)
+   ✦ Keyboard accessibility
+   ============================================================
+
+   ⚙️  EMAILJS SETUP (REQUIRED)
+   ─────────────────────────────
+   1. Go to https://emailjs.com and create a free account
+   2. Add an Email Service (Gmail recommended):
+      Dashboard → Email Services → Add New Service → Gmail
+      → Copy your SERVICE_ID (e.g. "service_abc123")
+   3. Create an Email Template:
+      Dashboard → Email Templates → Create New Template
+      Use these template variables:
+        Subject:  New Portfolio Message: {{subject}}
+        Body:
+          Name:    {{from_name}}
+          Email:   {{from_email}}
+          Subject: {{subject}}
+          Message: {{message}}
+      → Save → Copy TEMPLATE_ID (e.g. "template_xyz789")
+   4. Get your Public Key:
+      Dashboard → Account → API Keys → Public Key
+   5. Paste all three values below:
    ============================================================ */
 
 'use strict';
 
-/* ─────────────────────────────────────────────────────────
-   1. DOM READY GUARD
-───────────────────────────────────────────────────────── */
+/* ─────────────────────────────────────────────
+   EMAILJS CONFIG — REPLACE THESE VALUES
+───────────────────────────────────────────── */
+const EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';     // ← paste here
+const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';     // ← paste here
+const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';   // ← paste here
+
+/* ─────────────────────────────────────────────
+   INIT
+───────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
 
-  /* ─────────────────────────────────────────────────────
-     2. SCROLL PROGRESS BAR
-  ───────────────────────────────────────────────────── */
-  function updateScrollProgress() {
-    const scrollTop  = window.scrollY;
-    const docHeight  = document.documentElement.scrollHeight - window.innerHeight;
-    const pct        = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-    document.body.style.setProperty('--scroll-pct', pct.toFixed(2) + '%');
+  /* Initialize EmailJS */
+  if (typeof emailjs !== 'undefined' && EMAILJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY') {
+    emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
   }
 
+  initScrollProgress();
+  initNavbar();
+  initMobileMenu();
+  initScrollReveal();
+  initSkillBars();
+  initTyping();
+  initBackToTop();
+  initSmoothScroll();
+  initContactForm();
+  initProjectTilt();
 
-  /* ─────────────────────────────────────────────────────
-     3. GLASS NAVBAR (scroll-based)
-  ───────────────────────────────────────────────────── */
-  const navbar = document.getElementById('navbar');
+});
 
-  function handleNav() {
-    if (!navbar) return;
-    navbar.classList.toggle('scrolled', window.scrollY > 60);
-  }
+/* ─────────────────────────────────────────────
+   1. SCROLL PROGRESS BAR
+───────────────────────────────────────────── */
+function initScrollProgress() {
+  const bar = document.getElementById('scroll-progress');
+  if (!bar) return;
 
+  window.addEventListener('scroll', () => {
+    const scrolled = window.scrollY;
+    const total    = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.width = total > 0 ? (scrolled / total * 100).toFixed(2) + '%' : '0%';
+  }, { passive: true });
+}
 
-  /* ─────────────────────────────────────────────────────
-     4. ACTIVE NAV LINK HIGHLIGHT
-  ───────────────────────────────────────────────────── */
-  const sections  = document.querySelectorAll('section[id]');
-  const navLinks  = document.querySelectorAll('.nav-links a');
+/* ─────────────────────────────────────────────
+   2. NAVBAR — glass on scroll + active links
+───────────────────────────────────────────── */
+function initNavbar() {
+  const nav     = document.getElementById('navbar');
+  const links   = document.querySelectorAll('.nav-links a');
+  const sections = document.querySelectorAll('section[id]');
+  if (!nav) return;
 
-  const sectionObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        navLinks.forEach(a => {
-          const isActive = a.getAttribute('href') === '#' + entry.target.id;
-          a.style.color  = isActive ? 'var(--gold2)' : '';
+  /* Glass effect on scroll */
+  const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 60);
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  /* Active link on scroll via IntersectionObserver */
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(a => {
+          const active = a.getAttribute('href') === '#' + e.target.id;
+          a.classList.toggle('active', active);
         });
       }
     });
-  }, { threshold: 0.4 });
+  }, { threshold: 0.45 });
 
-  sections.forEach(s => sectionObserver.observe(s));
+  sections.forEach(s => io.observe(s));
+}
 
+/* ─────────────────────────────────────────────
+   3. MOBILE MENU
+───────────────────────────────────────────── */
+function initMobileMenu() {
+  const btn   = document.getElementById('hamburger');
+  const menu  = document.getElementById('mobNav');
+  const close = document.getElementById('mobClose');
+  if (!btn || !menu) return;
 
-  /* ─────────────────────────────────────────────────────
-     5. SCROLL-REVEAL ANIMATIONS
-  ───────────────────────────────────────────────────── */
-  const revealEls = document.querySelectorAll('.reveal');
+  const open = () => {
+    menu.classList.add('open');
+    btn.classList.add('open');
+    btn.setAttribute('aria-expanded', 'true');
+    menu.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  };
 
-  const revealObserver = new IntersectionObserver((entries) => {
+  const shut = () => {
+    menu.classList.remove('open');
+    btn.classList.remove('open');
+    btn.setAttribute('aria-expanded', 'false');
+    menu.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  };
+
+  btn.addEventListener('click', () => menu.classList.contains('open') ? shut() : open());
+  close && close.addEventListener('click', shut);
+  menu.querySelectorAll('a').forEach(a => a.addEventListener('click', shut));
+  document.addEventListener('keydown', e => e.key === 'Escape' && shut());
+
+  /* Close on outside click */
+  document.addEventListener('click', e => {
+    if (menu.classList.contains('open') && !menu.contains(e.target) && !btn.contains(e.target)) shut();
+  });
+
+  /* Expose for any inline onclick usage */
+  window.closeMob = shut;
+}
+
+/* ─────────────────────────────────────────────
+   4. SCROLL REVEAL
+───────────────────────────────────────────── */
+function initScrollReveal() {
+  const els = document.querySelectorAll('.reveal');
+  const io  = new IntersectionObserver((entries) => {
     entries.forEach((entry, i) => {
       if (entry.isIntersecting) {
-        /* staggered delay for siblings */
-        const delay = i * 85;
-        setTimeout(() => entry.target.classList.add('visible'), delay);
-        revealObserver.unobserve(entry.target);
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        io.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  }, { threshold: 0.06, rootMargin: '0px 0px -36px 0px' });
 
-  revealEls.forEach(el => revealObserver.observe(el));
+  els.forEach(el => io.observe(el));
+}
 
-
-  /* ─────────────────────────────────────────────────────
-     6. SKILL BAR FILL ANIMATION
-  ───────────────────────────────────────────────────── */
-  const skillCards = document.querySelectorAll('.skill-category');
-
-  const skillObserver = new IntersectionObserver((entries) => {
+/* ─────────────────────────────────────────────
+   5. SKILL BARS — animate to data-w on reveal
+───────────────────────────────────────────── */
+function initSkillBars() {
+  const cards = document.querySelectorAll('.sk-card');
+  const io    = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-
-        entry.target.querySelectorAll('.skill-bar-fill').forEach((bar, i) => {
-          const w = parseFloat(bar.dataset.w || 1);
-          setTimeout(() => {
-            bar.style.transition = 'transform 1.1s cubic-bezier(.22,1,.36,1)';
-            bar.style.transform  = `scaleX(${w})`;
-          }, i * 120 + 200);
-        });
-
-        skillObserver.unobserve(entry.target);
-      }
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('visible');
+      entry.target.querySelectorAll('.fill').forEach((fill, i) => {
+        const w = parseFloat(fill.dataset.w || 1);
+        setTimeout(() => { fill.style.transform = `scaleX(${w})`; }, i * 130 + 200);
+      });
+      io.unobserve(entry.target);
     });
   }, { threshold: 0.2 });
 
-  skillCards.forEach(c => skillObserver.observe(c));
+  cards.forEach(c => io.observe(c));
+}
 
+/* ─────────────────────────────────────────────
+   6. TYPING ANIMATION — hero role line
+───────────────────────────────────────────── */
+function initTyping() {
+  const el = document.querySelector('.hero-role');
+  if (!el) return;
 
-  /* ─────────────────────────────────────────────────────
-     7. MOBILE MENU
-  ───────────────────────────────────────────────────── */
-  const hamburger  = document.getElementById('hamburger');
-  const mobileMenu = document.getElementById('mobileMenu');
-  const mobileClose = document.getElementById('mobileClose');
+  const phrases = [
+    'Computer Science Student · Aspiring Software Developer · AI Enthusiast',
+    'Building real-world software, one project at a time.',
+    'Exploring AI, Backend Development & Robotics.',
+    'B.Tech CSE · KIIT University · Batch 2027',
+  ];
 
-  function openMobile() {
-    mobileMenu  && mobileMenu.classList.add('open');
-    hamburger   && hamburger.classList.add('active');
-    document.body.style.overflow = 'hidden'; /* prevent scroll behind menu */
-  }
-  function closeMobile() {
-    mobileMenu  && mobileMenu.classList.remove('open');
-    hamburger   && hamburger.classList.remove('active');
-    document.body.style.overflow = '';
-  }
+  /* Add blinking cursor via CSS class */
+  el.classList.add('typing-cursor');
 
-  hamburger  && hamburger.addEventListener('click', openMobile);
-  mobileClose && mobileClose.addEventListener('click', closeMobile);
+  let pi = 0, ci = 0, del = false;
 
-  /* Close mobile menu when a link is clicked */
-  mobileMenu && mobileMenu.querySelectorAll('a').forEach(a => {
-    a.addEventListener('click', closeMobile);
-  });
+  const tick = () => {
+    const phrase = phrases[pi];
+    el.textContent = del ? phrase.slice(0, --ci) : phrase.slice(0, ++ci);
 
-  /* Close mobile menu on outside click */
-  document.addEventListener('click', (e) => {
-    if (mobileMenu && mobileMenu.classList.contains('open')) {
-      if (!mobileMenu.contains(e.target) && !hamburger.contains(e.target)) {
-        closeMobile();
-      }
-    }
-  });
+    if (!del && ci === phrase.length) { del = true; return setTimeout(tick, 2600); }
+    if (del && ci === 0)             { del = false; pi = (pi + 1) % phrases.length; return setTimeout(tick, 400); }
+    setTimeout(tick, del ? 18 : 38);
+  };
 
-  /* Expose closeMobile globally (used by inline onclick attributes) */
-  window.closeMobile = closeMobile;
+  setTimeout(tick, 1000);
+}
 
+/* ─────────────────────────────────────────────
+   7. BACK TO TOP
+───────────────────────────────────────────── */
+function initBackToTop() {
+  const btt = document.getElementById('btt');
+  if (!btt) return;
 
-  /* ─────────────────────────────────────────────────────
-     8. SMOOTH SCROLL (with navbar offset)
-  ───────────────────────────────────────────────────── */
-  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', (e) => {
-      const targetId = anchor.getAttribute('href');
-      if (targetId === '#') return;
-      const target = document.querySelector(targetId);
-      if (!target) return;
+  const toggle = () => btt.classList.toggle('show', window.scrollY > 400);
+  window.addEventListener('scroll', toggle, { passive: true });
+  btt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  toggle();
+}
 
+/* ─────────────────────────────────────────────
+   8. SMOOTH SCROLL (offset for fixed navbar)
+───────────────────────────────────────────── */
+function initSmoothScroll() {
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const id  = a.getAttribute('href');
+      if (id === '#') return;
+      const tgt = document.querySelector(id);
+      if (!tgt) return;
       e.preventDefault();
-      const offset    = navbar ? navbar.offsetHeight + 16 : 80;
-      const targetTop = target.getBoundingClientRect().top + window.scrollY - offset;
-
-      window.scrollTo({ top: targetTop, behavior: 'smooth' });
+      const nav    = document.getElementById('navbar');
+      const offset = nav ? nav.offsetHeight + 16 : 80;
+      window.scrollTo({ top: tgt.getBoundingClientRect().top + window.scrollY - offset, behavior: 'smooth' });
     });
   });
+}
 
+/* ─────────────────────────────────────────────
+   9. CONTACT FORM — EmailJS
+───────────────────────────────────────────── */
+function initContactForm() {
+  const form   = document.getElementById('contactForm');
+  const btnEl  = document.getElementById('formBtn');
+  const okEl   = document.getElementById('fs-ok');
+  const errEl  = document.getElementById('fs-err');
+  if (!form) return;
 
-  /* ─────────────────────────────────────────────────────
-     9. TYPING ANIMATION (Hero headline)
-  ───────────────────────────────────────────────────── */
-  const typingTarget = document.querySelector('.hero-headline');
+  const showStatus = (el, show) => { el.hidden = !show; };
+  const resetStatus = () => { showStatus(okEl, false); showStatus(errEl, false); };
 
-  if (typingTarget) {
-    const phrases = [
-      'Computer Science Student · Aspiring Software Developer · AI & Problem-Solving Enthusiast',
-      'Building real-world software, one project at a time.',
-      'Exploring AI, Backend Development & Robotics.',
-      'B.Tech CSE · KIIT University · Batch 2027',
-    ];
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    resetStatus();
 
-    let phraseIndex = 0;
-    let charIndex   = 0;
-    let deleting    = false;
+    /* Validate */
+    let valid = true;
+    form.querySelectorAll('[required]').forEach(field => {
+      const empty = !field.value.trim();
+      field.classList.toggle('err', empty);
+      if (empty) valid = false;
+    });
 
-    /* Store original text to restore after animation if needed */
-    const originalText = typingTarget.textContent;
-    typingTarget.textContent = '';
-
-    function type() {
-      const current = phrases[phraseIndex];
-
-      if (!deleting) {
-        typingTarget.textContent = current.slice(0, ++charIndex);
-        if (charIndex === current.length) {
-          deleting = true;
-          return setTimeout(type, 2400); /* pause at full phrase */
-        }
-        setTimeout(type, 38);
-      } else {
-        typingTarget.textContent = current.slice(0, --charIndex);
-        if (charIndex === 0) {
-          deleting     = false;
-          phraseIndex  = (phraseIndex + 1) % phrases.length;
-          return setTimeout(type, 420);
-        }
-        setTimeout(type, 18);
-      }
+    /* Email format check */
+    const emailField = form.querySelector('[type="email"]');
+    if (emailField && emailField.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailField.value)) {
+      emailField.classList.add('err');
+      valid = false;
     }
 
-    /* Slight delay before starting typing — let hero animate in first */
-    setTimeout(type, 900);
-  }
+    if (!valid) return;
 
+    /* Check EmailJS is configured */
+    const configured = typeof emailjs !== 'undefined' && EMAILJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY';
 
-  /* ─────────────────────────────────────────────────────
-     10. BACK-TO-TOP BUTTON
-  ───────────────────────────────────────────────────── */
-  const btt = document.createElement('button');
-  btt.id            = 'btt';
-  btt.setAttribute('aria-label', 'Back to top');
-  btt.innerHTML     = '↑';
-  btt.style.cssText = `
-    position:fixed; bottom:28px; right:28px; z-index:999;
-    width:44px; height:44px; border-radius:50%;
-    background:linear-gradient(135deg, var(--gold), var(--gold2));
-    color:var(--bg); border:none; cursor:pointer;
-    font-size:1.1rem; font-weight:700;
-    display:flex; align-items:center; justify-content:center;
-    box-shadow:0 4px 20px rgba(201,168,76,.38);
-    opacity:0; transform:translateY(12px) scale(.88);
-    transition:opacity .3s ease, transform .3s ease, box-shadow .25s;
-    pointer-events:none;
-  `;
-  document.body.appendChild(btt);
+    btnEl.textContent = 'Sending…';
+    btnEl.disabled    = true;
 
-  btt.addEventListener('click', () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  });
-
-  btt.addEventListener('mouseenter', () => {
-    btt.style.boxShadow = '0 8px 32px rgba(201,168,76,.52)';
-    btt.style.transform = 'translateY(-2px) scale(1.06)';
-  });
-
-  btt.addEventListener('mouseleave', () => {
-    btt.style.boxShadow = '0 4px 20px rgba(201,168,76,.38)';
-    btt.style.transform = window.scrollY > 400
-      ? 'translateY(0) scale(1)'
-      : 'translateY(12px) scale(.88)';
-  });
-
-  function toggleBtt() {
-    const show = window.scrollY > 400;
-    btt.style.opacity        = show ? '1' : '0';
-    btt.style.transform      = show ? 'translateY(0) scale(1)' : 'translateY(12px) scale(.88)';
-    btt.style.pointerEvents  = show ? 'auto' : 'none';
-  }
-
-
-  /* ─────────────────────────────────────────────────────
-     11. UNIFIED SCROLL HANDLER (passive for perf)
-  ───────────────────────────────────────────────────── */
-  window.addEventListener('scroll', () => {
-    updateScrollProgress();
-    handleNav();
-    toggleBtt();
-  }, { passive: true });
-
-  /* Initial calls */
-  updateScrollProgress();
-  handleNav();
-  toggleBtt();
-
-
-  /* ─────────────────────────────────────────────────────
-     12. PROJECT CARD — TILT EFFECT (subtle, desktop only)
-  ───────────────────────────────────────────────────── */
-  if (window.matchMedia('(pointer: fine)').matches) {
-    document.querySelectorAll('.project-card:not(.upcoming)').forEach(card => {
-      card.addEventListener('mousemove', (e) => {
-        const rect   = card.getBoundingClientRect();
-        const x      = e.clientX - rect.left;
-        const y      = e.clientY - rect.top;
-        const rx     = ((y / rect.height) - 0.5) * 7;
-        const ry     = ((x / rect.width)  - 0.5) * -7;
-        card.style.transform = `translateY(-10px) rotateX(${rx}deg) rotateY(${ry}deg)`;
-      });
-
-      card.addEventListener('mouseleave', () => {
-        card.style.transform = '';
-        card.style.transition = 'transform .45s cubic-bezier(.22,1,.36,1), box-shadow .3s';
-      });
-
-      card.addEventListener('mouseenter', () => {
-        card.style.transition = 'transform .12s ease-out, box-shadow .3s';
-      });
-    });
-  }
-
-
-  /* ─────────────────────────────────────────────────────
-     13. CONTACT FORM — LIGHTWEIGHT VALIDATION & FEEDBACK
-  ───────────────────────────────────────────────────── */
-  const submitBtn = document.querySelector('.form-submit');
-  const nameInput = document.querySelector('.contact-form input[type="text"]');
-  const emailInput = document.querySelector('.contact-form input[type="email"]');
-  const msgInput  = document.querySelector('.contact-form textarea');
-
-  if (submitBtn) {
-    submitBtn.addEventListener('click', () => {
-      const name  = nameInput  ? nameInput.value.trim()  : '';
-      const email = emailInput ? emailInput.value.trim() : '';
-      const msg   = msgInput   ? msgInput.value.trim()   : '';
-
-      if (!name || !email || !msg) {
-        submitBtn.textContent = '⚠ Please fill all fields';
-        submitBtn.style.background = 'linear-gradient(135deg, #7c5c1a, #a07820)';
-        setTimeout(() => {
-          submitBtn.textContent = 'Send Message →';
-          submitBtn.style.background = '';
-        }, 2200);
-        return;
+    if (configured) {
+      try {
+        await emailjs.sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, form);
+        showStatus(okEl, true);
+        form.reset();
+      } catch (err) {
+        console.error('EmailJS error:', err);
+        showStatus(errEl, true);
       }
+    } else {
+      /* Fallback: open mailto with form data */
+      const name    = form.querySelector('[name="from_name"]')?.value   || '';
+      const email   = form.querySelector('[name="from_email"]')?.value  || '';
+      const subject = form.querySelector('[name="subject"]')?.value     || 'Portfolio Inquiry';
+      const message = form.querySelector('[name="message"]')?.value     || '';
+      const body    = `Name: ${name}\nEmail: ${email}\n\n${message}`;
+      window.location.href =
+        `mailto:aashutoshg01@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      showStatus(okEl, true);
+      form.reset();
+    }
 
-      submitBtn.textContent = '✓ Message Sent!';
-      submitBtn.style.background = 'linear-gradient(135deg, #1d6f42, #2e9e5e)';
-      submitBtn.disabled = true;
-
-      /* Construct mailto link as fallback */
-      const subject = encodeURIComponent('Portfolio Inquiry from ' + name);
-      const body    = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\n${msg}`);
-      window.location.href = `mailto:aashutoshg01@gmail.com?subject=${subject}&body=${body}`;
-
-      setTimeout(() => {
-        submitBtn.textContent = 'Send Message →';
-        submitBtn.style.background = '';
-        submitBtn.disabled = false;
-        if (nameInput)  nameInput.value  = '';
-        if (emailInput) emailInput.value = '';
-        if (msgInput)   msgInput.value   = '';
-      }, 4000);
-    });
-  }
-
-
-  /* ─────────────────────────────────────────────────────
-     14. KEYBOARD ACCESSIBILITY — ESC closes mobile menu
-  ───────────────────────────────────────────────────── */
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeMobile();
+    btnEl.textContent = 'Send Message →';
+    btnEl.disabled    = false;
   });
 
-}); /* end DOMContentLoaded */
+  /* Remove error state on input */
+  form.querySelectorAll('input, textarea').forEach(field => {
+    field.addEventListener('input', () => field.classList.remove('err'));
+  });
+}
+
+/* ─────────────────────────────────────────────
+   10. PROJECT CARD TILT (desktop pointer only)
+───────────────────────────────────────────── */
+function initProjectTilt() {
+  if (!window.matchMedia('(pointer: fine)').matches) return;
+
+  document.querySelectorAll('.proj-card:not(.proj-upcoming)').forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const r  = card.getBoundingClientRect();
+      const rx = ((e.clientY - r.top)  / r.height - 0.5) * 6;
+      const ry = ((e.clientX - r.left) / r.width  - 0.5) * -6;
+      card.style.transform = `translateY(-8px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transition = 'transform .45s cubic-bezier(.22,1,.36,1), box-shadow .3s';
+      card.style.transform  = '';
+    });
+    card.addEventListener('mouseenter', () => {
+      card.style.transition = 'transform .1s ease-out, box-shadow .3s';
+    });
+  });
+}
