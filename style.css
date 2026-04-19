@@ -384,7 +384,8 @@ nav.scrolled {
   min-height: 100vh;
   display:    flex;
   align-items: center;
-  padding:    120px 60px 80px;
+  justify-content: center;
+  padding:    120px 0 80px;
   position:   relative;
   overflow:   hidden;
 }
@@ -1669,17 +1670,16 @@ footer::before {
    34. HERO LAYOUT — RESPONSIVE  ✦
    ══════════════════════════════════════════════════════════ */
 
-/* On screens where float card overlaps (< 1200px), hide the float card
-   and rely on the new inline photo layout instead */
-@media (max-width: 1200px) {
-  .hero-float-card { display: none; }
-  .hero-socials    { display: none; }
+.hero-float-card { display: none !important; }
+.hero-socials    { display: none !important; }
 
+.hero-content { position: static; max-width: 100%; }
+
+@media (max-width: 1200px) {
   .hero-layout {
     padding: 0 40px;
     gap:     40px;
   }
-
   .hero-photo-ring {
     width:  180px;
     height: 180px;
