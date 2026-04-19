@@ -412,7 +412,17 @@ nav.scrolled {
   50%       { opacity: 1; }
 }
 
+/* hero-content — base rule (overridden by .hero-layout context below) */
 .hero-content { position: relative; z-index: 1; max-width: 800px; }
+
+/* ── When inside the new two-column layout, reset conflicting values ── */
+.hero-layout .hero-content {
+  position:  static;
+  max-width: none;
+  flex:      1 1 0;
+  min-width: 0; /* prevent flex blowout */
+  z-index:   1;
+}
 
 /* Status badge */
 .hero-tag {
@@ -1535,106 +1545,101 @@ footer::before {
    33. HERO — TWO-COLUMN LAYOUT WITH PROFILE PHOTO  ✦
    ══════════════════════════════════════════════════════════ */
 
-/* New wrapper that places text left, photo right */
+/* Hide old absolute-positioned elements — replaced by new layout */
+.hero-float-card { display: none !important; }
+.hero-socials    { display: none !important; }
+
+/* ── Two-column flex wrapper ── */
 .hero-layout {
   position:        relative;
   z-index:         1;
   display:         flex;
+  flex-direction:  row;
   align-items:     center;
   justify-content: space-between;
-  gap:             60px;
+  gap:             64px;
   width:           100%;
-  max-width:       1100px;
+  max-width:       1140px;
   padding:         0 60px;
+  box-sizing:      border-box;
 }
 
-/* Keep existing .hero-content but reset its absolute-ness */
+/* Text column — grows to fill space */
 .hero-layout .hero-content {
-  position:  static;
-  max-width: 620px;
-  flex:      1 1 auto;
+  position:  static;   /* override old relative */
+  max-width: none;
+  flex:      1 1 0;
+  min-width: 0;        /* prevent flex overflow */
+  z-index:   1;
 }
 
-/* ── Profile photo wrapper ── */
+/* ── Photo column ── */
 .hero-photo-wrap {
-  position:   relative;
-  flex-shrink: 0;
-  display:     flex;
+  flex-shrink:    0;
+  display:        flex;
   flex-direction: column;
   align-items:    center;
-  gap:            14px;
+  gap:            16px;
   opacity:        0;
   animation:      fadeUp .9s .9s forwards;
 }
 
-/* Gold glow ring */
+/* Gold gradient ring — overflow:hidden clips the photo to circle */
 .hero-photo-ring {
-  position:        relative;
-  width:           220px;
-  height:          220px;
-  border-radius:   50%;
-  padding:         4px; /* ring thickness */
-  background:      linear-gradient(135deg, var(--gold), var(--gold2), transparent 60%, var(--gold));
+  width:         260px;
+  height:        260px;
+  border-radius: 50%;
+  overflow:      hidden;          /* clips img to circle */
+  border:        3px solid var(--gold);
   box-shadow:
-    0 0 0   1px rgba(201,168,76,.25),
-    0 0 32px rgba(201,168,76,.22),
-    0 0 70px rgba(201,168,76,.10);
-  transition:      box-shadow .4s ease, transform .4s var(--ease-spring);
+    0 0 0   1px rgba(201,168,76,.18),
+    0 0 36px rgba(201,168,76,.20),
+    0 0 72px rgba(201,168,76,.08);
+  transition:    box-shadow .4s ease, transform .4s cubic-bezier(.34,1.56,.64,1);
+  /* Dark gap between border and photo */
+  outline:       4px solid var(--bg);
+  outline-offset: -7px;
 }
 
 .hero-photo-ring:hover {
   box-shadow:
-    0 0 0   1px rgba(201,168,76,.5),
-    0 0 44px rgba(201,168,76,.38),
-    0 0 90px rgba(201,168,76,.18);
-  transform: scale(1.04);
+    0 0 0   2px rgba(201,168,76,.45),
+    0 0 52px rgba(201,168,76,.30),
+    0 0 100px rgba(201,168,76,.12);
+  transform: scale(1.04) translateY(-4px);
 }
 
-/* Inner white gap between ring and photo */
-.hero-photo-ring::before {
-  content:       '';
-  position:      absolute;
-  inset:         3px;
-  border-radius: 50%;
-  border:        2px solid var(--bg);
-  z-index:       1;
-  pointer-events: none;
-}
-
-/* The actual photo */
+/* The actual <img> */
 .hero-photo {
-  display:       block;
-  width:         100%;
-  height:        100%;
-  object-fit:    cover;
+  display:         block;
+  width:           100%;
+  height:          100%;
+  object-fit:      cover;
   object-position: center top;
-  border-radius: 50%;
-  position:      relative;
-  z-index:       0;
-  transition:    filter .4s ease, transform .4s var(--ease-spring);
-  filter:        brightness(1.04) contrast(1.02);
+  transition:      transform .4s cubic-bezier(.34,1.56,.64,1), filter .3s;
+  filter:          brightness(1.03) contrast(1.02);
 }
 
 .hero-photo-ring:hover .hero-photo {
-  filter:    brightness(1.10) contrast(1.04);
-  transform: scale(1.03);
+  transform: scale(1.06);
+  filter:    brightness(1.10);
 }
 
-/* "Open to Work" badge below photo */
+/* "Open to Work" badge */
 .hero-photo-badge {
   display:        inline-flex;
   align-items:    center;
-  gap:            7px;
+  gap:            8px;
   font-family:    var(--font-mono);
   font-size:      .68rem;
   letter-spacing: .14em;
   text-transform: uppercase;
   color:          #4ade80;
-  padding:        5px 14px;
+  padding:        6px 16px;
   border:         1px solid rgba(74,222,128,.28);
   background:     rgba(74,222,128,.07);
-  border-radius:  0; /* keep square with brand */
 }
+
 .hero-photo-badge-dot {
   width:         7px;
   height:        7px;
@@ -1645,51 +1650,25 @@ footer::before {
   flex-shrink:   0;
 }
 
-
-/* ── Card avatar — photo version ── */
-.card-avatar {
-  /* Remove old text-centering styles when photo is used */
-  overflow: hidden;
-}
-.card-avatar-img {
-  width:         100%;
-  height:        100%;
-  object-fit:    cover;
-  object-position: center top;
-  border-radius: 50%;
-  display:       block;
-  transition:    transform .4s var(--ease-spring), filter .3s ease;
-}
-.hero-float-card:hover .card-avatar-img {
-  transform: scale(1.07);
-  filter:    brightness(1.08);
-}
-
-
 /* ══════════════════════════════════════════════════════════
    34. HERO LAYOUT — RESPONSIVE  ✦
    ══════════════════════════════════════════════════════════ */
 
-.hero-float-card { display: none !important; }
-.hero-socials    { display: none !important; }
-
-.hero-content { position: static; max-width: 100%; }
-
 @media (max-width: 1200px) {
   .hero-layout {
+    gap:     44px;
     padding: 0 40px;
-    gap:     40px;
   }
   .hero-photo-ring {
-    width:  180px;
-    height: 180px;
+    width:  210px;
+    height: 210px;
   }
 }
 
 @media (max-width: 900px) {
-  /* Stack: photo on top, text below */
+  /* Stack: text on top, photo below */
   .hero-layout {
-    flex-direction: column-reverse;
+    flex-direction: column;
     align-items:    center;
     text-align:     center;
     padding:        0 24px;
@@ -1697,28 +1676,20 @@ footer::before {
   }
 
   .hero-layout .hero-content {
-    display:         flex;
-    flex-direction:  column;
-    align-items:     center;
+    display:        flex;
+    flex-direction: column;
+    align-items:    center;
   }
 
-  .hero-btns {
-    justify-content: center;
-  }
+  .hero-btns { justify-content: center; }
 
   .hero-photo-ring {
-    width:  160px;
-    height: 160px;
-  }
-
-  .hero-photo-wrap {
-    animation-name: fadeIn; /* simpler on mobile */
+    width:  190px;
+    height: 190px;
   }
 }
 
 @media (max-width: 480px) {
-  .hero-photo-ring {
-    width:  134px;
-    height: 134px;
-  }
+  .hero-layout  { gap: 24px; padding: 0 16px; }
+  .hero-photo-ring { width: 150px; height: 150px; }
 }
