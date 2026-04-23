@@ -1,57 +1,20 @@
 /* ============================================================
-   AASHUTOSH KUMAR GUPTA — Portfolio
-   script.js  ·  Production v3
+   AASHUTOSH KUMAR GUPTA — Portfolio · script.js v4
    ============================================================
-   Features:
-   ✦ EmailJS contact form (sends to aashutoshg01@gmail.com)
-   ✦ Scroll progress bar
-   ✦ Sticky glass navbar
-   ✦ Active nav link highlight
-   ✦ Scroll-reveal animations
-   ✦ Skill bar fill on scroll
-   ✦ Hero typing animation
-   ✦ Back-to-top button
-   ✦ Mobile menu with body-scroll lock
-   ✦ Project card tilt (desktop)
-   ✦ Keyboard accessibility
-   ============================================================
-
-   ⚙️  EMAILJS SETUP (REQUIRED)
-   ─────────────────────────────
-   1. Go to https://emailjs.com and create a free account
-   2. Add an Email Service (Gmail recommended):
-      Dashboard → Email Services → Add New Service → Gmail
-      → Copy your SERVICE_ID (e.g. "service_abc123")
-   3. Create an Email Template:
-      Dashboard → Email Templates → Create New Template
-      Use these template variables:
-        Subject:  New Portfolio Message: {{subject}}
-        Body:
-          Name:    {{from_name}}
-          Email:   {{from_email}}
-          Subject: {{subject}}
-          Message: {{message}}
-      → Save → Copy TEMPLATE_ID (e.g. "template_xyz789")
-   4. Get your Public Key:
-      Dashboard → Account → API Keys → Public Key
-   5. Paste all three values below:
+   ⚙️ EMAILJS SETUP — paste your keys below:
+   1. https://emailjs.com → create account
+   2. Add Gmail service  → copy SERVICE_ID
+   3. Create template    → copy TEMPLATE_ID
+      Template vars: {{from_name}} {{from_email}} {{subject}} {{message}}
+   4. Account → API Keys → copy PUBLIC_KEY
    ============================================================ */
-
 'use strict';
 
-/* ─────────────────────────────────────────────
-   EMAILJS CONFIG — REPLACE THESE VALUES
-───────────────────────────────────────────── */
-const EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';     // ← paste here
-const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';     // ← paste here
-const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';   // ← paste here
+const EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';
+const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';
+const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';
 
-/* ─────────────────────────────────────────────
-   INIT
-───────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
-
-  /* Initialize EmailJS */
   if (typeof emailjs !== 'undefined' && EMAILJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY') {
     emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
   }
@@ -66,55 +29,42 @@ document.addEventListener('DOMContentLoaded', () => {
   initSmoothScroll();
   initContactForm();
   initProjectTilt();
-
+  initParallax();
 });
 
-/* ─────────────────────────────────────────────
-   1. SCROLL PROGRESS BAR
-───────────────────────────────────────────── */
+/* 1. Scroll progress */
 function initScrollProgress() {
   const bar = document.getElementById('scroll-progress');
   if (!bar) return;
-
-  window.addEventListener('scroll', () => {
-    const scrolled = window.scrollY;
-    const total    = document.documentElement.scrollHeight - window.innerHeight;
-    bar.style.width = total > 0 ? (scrolled / total * 100).toFixed(2) + '%' : '0%';
-  }, { passive: true });
+  const update = () => {
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.width = total > 0 ? (window.scrollY / total * 100).toFixed(2) + '%' : '0%';
+  };
+  window.addEventListener('scroll', update, { passive: true });
 }
 
-/* ─────────────────────────────────────────────
-   2. NAVBAR — glass on scroll + active links
-───────────────────────────────────────────── */
+/* 2. Navbar */
 function initNavbar() {
-  const nav     = document.getElementById('navbar');
-  const links   = document.querySelectorAll('.nav-links a');
-  const sections = document.querySelectorAll('section[id]');
+  const nav   = document.getElementById('navbar');
+  const links = document.querySelectorAll('.nav-links a');
+  const sects = document.querySelectorAll('section[id]');
   if (!nav) return;
 
-  /* Glass effect on scroll */
   const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 60);
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
-  /* Active link on scroll via IntersectionObserver */
-  const io = new IntersectionObserver((entries) => {
+  const io = new IntersectionObserver(entries => {
     entries.forEach(e => {
       if (e.isIntersecting) {
-        links.forEach(a => {
-          const active = a.getAttribute('href') === '#' + e.target.id;
-          a.classList.toggle('active', active);
-        });
+        links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + e.target.id));
       }
     });
-  }, { threshold: 0.45 });
-
-  sections.forEach(s => io.observe(s));
+  }, { threshold: 0.5 });
+  sects.forEach(s => io.observe(s));
 }
 
-/* ─────────────────────────────────────────────
-   3. MOBILE MENU
-───────────────────────────────────────────── */
+/* 3. Mobile menu */
 function initMobileMenu() {
   const btn   = document.getElementById('hamburger');
   const menu  = document.getElementById('mobNav');
@@ -122,18 +72,13 @@ function initMobileMenu() {
   if (!btn || !menu) return;
 
   const open = () => {
-    menu.classList.add('open');
-    btn.classList.add('open');
-    btn.setAttribute('aria-expanded', 'true');
-    menu.setAttribute('aria-hidden', 'false');
+    menu.classList.add('open'); btn.classList.add('open');
+    btn.setAttribute('aria-expanded', 'true'); menu.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
   };
-
   const shut = () => {
-    menu.classList.remove('open');
-    btn.classList.remove('open');
-    btn.setAttribute('aria-expanded', 'false');
-    menu.setAttribute('aria-hidden', 'true');
+    menu.classList.remove('open'); btn.classList.remove('open');
+    btn.setAttribute('aria-expanded', 'false'); menu.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
   };
 
@@ -141,206 +86,175 @@ function initMobileMenu() {
   close && close.addEventListener('click', shut);
   menu.querySelectorAll('a').forEach(a => a.addEventListener('click', shut));
   document.addEventListener('keydown', e => e.key === 'Escape' && shut());
-
-  /* Close on outside click */
   document.addEventListener('click', e => {
     if (menu.classList.contains('open') && !menu.contains(e.target) && !btn.contains(e.target)) shut();
   });
-
-  /* Expose for any inline onclick usage */
   window.closeMob = shut;
 }
 
-/* ─────────────────────────────────────────────
-   4. SCROLL REVEAL
-───────────────────────────────────────────── */
+/* 4. Scroll reveal */
 function initScrollReveal() {
-  const els = document.querySelectorAll('.reveal');
-  const io  = new IntersectionObserver((entries) => {
+  const io = new IntersectionObserver((entries) => {
     entries.forEach((entry, i) => {
       if (entry.isIntersecting) {
-        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        setTimeout(() => entry.target.classList.add('visible'), i * 90);
         io.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.06, rootMargin: '0px 0px -36px 0px' });
-
-  els.forEach(el => io.observe(el));
+  }, { threshold: 0.07, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 }
 
-/* ─────────────────────────────────────────────
-   5. SKILL BARS — animate to data-w on reveal
-───────────────────────────────────────────── */
+/* 5. Skill bars */
 function initSkillBars() {
-  const cards = document.querySelectorAll('.sk-card');
-  const io    = new IntersectionObserver((entries) => {
+  const io = new IntersectionObserver(entries => {
     entries.forEach(entry => {
       if (!entry.isIntersecting) return;
-      entry.target.classList.add('visible');
-      entry.target.querySelectorAll('.fill').forEach((fill, i) => {
+      const card = entry.target;
+      card.classList.add('bar-animated');
+      card.querySelectorAll('.fill').forEach((fill, i) => {
         const w = parseFloat(fill.dataset.w || 1);
-        setTimeout(() => { fill.style.transform = `scaleX(${w})`; }, i * 130 + 200);
+        setTimeout(() => { fill.style.transform = `scaleX(${w})`; }, i * 150 + 250);
       });
-      io.unobserve(entry.target);
+      io.unobserve(card);
     });
-  }, { threshold: 0.2 });
-
-  cards.forEach(c => io.observe(c));
+  }, { threshold: 0.25 });
+  document.querySelectorAll('.sk-card').forEach(c => io.observe(c));
 }
 
-/* ─────────────────────────────────────────────
-   6. TYPING ANIMATION — hero role line
-───────────────────────────────────────────── */
+/* 6. Typing animation */
 function initTyping() {
-  const el = document.querySelector('.hero-role');
+  const el = document.getElementById('heroRole');
   if (!el) return;
-
   const phrases = [
-    'Computer Science Student · Aspiring Software Developer · AI Enthusiast',
+    'Computer Science Student · Software Developer · AI Enthusiast',
     'Building real-world software, one project at a time.',
-    'Exploring AI, Backend Development & Robotics.',
     'B.Tech CSE · KIIT University · Batch 2027',
+    'AI/ML · Backend Development · Robotics Systems',
   ];
-
-  /* Add blinking cursor via CSS class */
-  el.classList.add('typing-cursor');
-
+  el.classList.add('typing');
   let pi = 0, ci = 0, del = false;
-
   const tick = () => {
     const phrase = phrases[pi];
     el.textContent = del ? phrase.slice(0, --ci) : phrase.slice(0, ++ci);
-
-    if (!del && ci === phrase.length) { del = true; return setTimeout(tick, 2600); }
-    if (del && ci === 0)             { del = false; pi = (pi + 1) % phrases.length; return setTimeout(tick, 400); }
-    setTimeout(tick, del ? 18 : 38);
+    if (!del && ci === phrase.length) { del = true; return setTimeout(tick, 2800); }
+    if (del && ci === 0) { del = false; pi = (pi + 1) % phrases.length; return setTimeout(tick, 400); }
+    setTimeout(tick, del ? 16 : 40);
   };
-
-  setTimeout(tick, 1000);
+  setTimeout(tick, 1200);
 }
 
-/* ─────────────────────────────────────────────
-   7. BACK TO TOP
-───────────────────────────────────────────── */
+/* 7. Back to top */
 function initBackToTop() {
   const btt = document.getElementById('btt');
   if (!btt) return;
-
   const toggle = () => btt.classList.toggle('show', window.scrollY > 400);
   window.addEventListener('scroll', toggle, { passive: true });
   btt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
   toggle();
 }
 
-/* ─────────────────────────────────────────────
-   8. SMOOTH SCROLL (offset for fixed navbar)
-───────────────────────────────────────────── */
+/* 8. Smooth scroll */
 function initSmoothScroll() {
   document.querySelectorAll('a[href^="#"]').forEach(a => {
     a.addEventListener('click', e => {
-      const id  = a.getAttribute('href');
+      const id = a.getAttribute('href');
       if (id === '#') return;
       const tgt = document.querySelector(id);
       if (!tgt) return;
       e.preventDefault();
-      const nav    = document.getElementById('navbar');
-      const offset = nav ? nav.offsetHeight + 16 : 80;
-      window.scrollTo({ top: tgt.getBoundingClientRect().top + window.scrollY - offset, behavior: 'smooth' });
+      const nav = document.getElementById('navbar');
+      window.scrollTo({ top: tgt.getBoundingClientRect().top + window.scrollY - (nav ? nav.offsetHeight + 16 : 80), behavior: 'smooth' });
     });
   });
 }
 
-/* ─────────────────────────────────────────────
-   9. CONTACT FORM — EmailJS
-───────────────────────────────────────────── */
+/* 9. Contact form with EmailJS */
 function initContactForm() {
-  const form   = document.getElementById('contactForm');
-  const btnEl  = document.getElementById('formBtn');
-  const okEl   = document.getElementById('fs-ok');
-  const errEl  = document.getElementById('fs-err');
+  const form  = document.getElementById('contactForm');
+  const btn   = document.getElementById('formBtn');
+  const okEl  = document.getElementById('fs-ok');
+  const errEl = document.getElementById('fs-err');
   if (!form) return;
 
-  const showStatus = (el, show) => { el.hidden = !show; };
-  const resetStatus = () => { showStatus(okEl, false); showStatus(errEl, false); };
+  const reset = () => { okEl.hidden = true; errEl.hidden = true; };
 
-  form.addEventListener('submit', async (e) => {
+  form.addEventListener('submit', async e => {
     e.preventDefault();
-    resetStatus();
+    reset();
 
-    /* Validate */
     let valid = true;
-    form.querySelectorAll('[required]').forEach(field => {
-      const empty = !field.value.trim();
-      field.classList.toggle('err', empty);
+    form.querySelectorAll('[required]').forEach(f => {
+      const empty = !f.value.trim();
+      f.classList.toggle('err', empty);
       if (empty) valid = false;
     });
-
-    /* Email format check */
-    const emailField = form.querySelector('[type="email"]');
-    if (emailField && emailField.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailField.value)) {
-      emailField.classList.add('err');
-      valid = false;
+    const ef = form.querySelector('[type="email"]');
+    if (ef && ef.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(ef.value)) {
+      ef.classList.add('err'); valid = false;
     }
-
     if (!valid) return;
 
-    /* Check EmailJS is configured */
     const configured = typeof emailjs !== 'undefined' && EMAILJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY';
-
-    btnEl.textContent = 'Sending…';
-    btnEl.disabled    = true;
+    btn.innerHTML = '<span>Sending…</span>';
+    btn.disabled  = true;
 
     if (configured) {
       try {
         await emailjs.sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, form);
-        showStatus(okEl, true);
-        form.reset();
-      } catch (err) {
-        console.error('EmailJS error:', err);
-        showStatus(errEl, true);
+        okEl.hidden = false; form.reset();
+      } catch {
+        errEl.hidden = false;
       }
     } else {
-      /* Fallback: open mailto with form data */
-      const name    = form.querySelector('[name="from_name"]')?.value   || '';
-      const email   = form.querySelector('[name="from_email"]')?.value  || '';
-      const subject = form.querySelector('[name="subject"]')?.value     || 'Portfolio Inquiry';
-      const message = form.querySelector('[name="message"]')?.value     || '';
-      const body    = `Name: ${name}\nEmail: ${email}\n\n${message}`;
-      window.location.href =
-        `mailto:aashutoshg01@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-      showStatus(okEl, true);
-      form.reset();
+      const name = form.querySelector('[name="from_name"]')?.value || '';
+      const email= form.querySelector('[name="from_email"]')?.value || '';
+      const sub  = form.querySelector('[name="subject"]')?.value   || 'Portfolio Inquiry';
+      const msg  = form.querySelector('[name="message"]')?.value   || '';
+      window.location.href = `mailto:aashutoshg01@gmail.com?subject=${encodeURIComponent(sub)}&body=${encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\n${msg}`)}`;
+      okEl.hidden = false; form.reset();
     }
 
-    btnEl.textContent = 'Send Message →';
-    btnEl.disabled    = false;
+    btn.innerHTML = 'Send Message <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>';
+    btn.disabled = false;
   });
 
-  /* Remove error state on input */
-  form.querySelectorAll('input, textarea').forEach(field => {
-    field.addEventListener('input', () => field.classList.remove('err'));
-  });
+  form.querySelectorAll('input, textarea').forEach(f =>
+    f.addEventListener('input', () => f.classList.remove('err'))
+  );
 }
 
-/* ─────────────────────────────────────────────
-   10. PROJECT CARD TILT (desktop pointer only)
-───────────────────────────────────────────── */
+/* 10. Project tilt (desktop) */
 function initProjectTilt() {
   if (!window.matchMedia('(pointer: fine)').matches) return;
-
-  document.querySelectorAll('.proj-card:not(.proj-upcoming)').forEach(card => {
+  document.querySelectorAll('.proj-card:not(.proj-card-upcoming), .proj-featured').forEach(card => {
     card.addEventListener('mousemove', e => {
-      const r  = card.getBoundingClientRect();
-      const rx = ((e.clientY - r.top)  / r.height - 0.5) * 6;
-      const ry = ((e.clientX - r.left) / r.width  - 0.5) * -6;
+      const r = card.getBoundingClientRect();
+      const rx = ((e.clientY - r.top)  / r.height - .5) * 5;
+      const ry = ((e.clientX - r.left) / r.width  - .5) * -5;
       card.style.transform = `translateY(-8px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+      card.style.transformStyle = 'preserve-3d';
     });
     card.addEventListener('mouseleave', () => {
-      card.style.transition = 'transform .45s cubic-bezier(.22,1,.36,1), box-shadow .3s';
+      card.style.transition = 'transform .5s cubic-bezier(.22,1,.36,1)';
       card.style.transform  = '';
     });
     card.addEventListener('mouseenter', () => {
-      card.style.transition = 'transform .1s ease-out, box-shadow .3s';
+      card.style.transition = 'transform .1s ease-out';
     });
   });
+}
+
+/* 11. Subtle parallax on hero blobs */
+function initParallax() {
+  const blobs = document.querySelectorAll('.bg-blob');
+  if (!blobs.length) return;
+  window.addEventListener('mousemove', e => {
+    const cx = (e.clientX / window.innerWidth  - .5) * 20;
+    const cy = (e.clientY / window.innerHeight - .5) * 20;
+    blobs.forEach((b, i) => {
+      const factor = (i + 1) * .4;
+      b.style.transform = `translate(${cx * factor}px, ${cy * factor}px)`;
+    });
+  }, { passive: true });
 }
