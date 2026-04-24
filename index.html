@@ -4,19 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Aashutosh Kumar Gupta — Software Developer | KIIT CSE 2027</title>
-  <meta name="description" content="Portfolio of Aashutosh Kumar Gupta — B.Tech CSE student at KIIT University. Skilled in Python, Java, Flutter, AI & robotics. Open to internships.">
-  <meta name="keywords" content="Aashutosh Kumar Gupta, Aashutosh Gupta portfolio, KIIT developer, CSE student, software developer India, AI developer, Flutter developer, Python Java internship 2025">
+  <meta name="description" content="Portfolio of Aashutosh Kumar Gupta — B.Tech CSE student at KIIT University. Python, Java, Flutter, AI & robotics. Open to internships.">
+  <meta name="keywords" content="Aashutosh Kumar Gupta, Aashutosh Gupta portfolio, KIIT developer, CSE student, software developer India, AI developer, Flutter developer">
   <meta name="author" content="Aashutosh Kumar Gupta">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://aashutoshkumargupta.netlify.app/">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://aashutoshkumargupta.netlify.app/">
   <meta property="og:title" content="Aashutosh Kumar Gupta — Developer Portfolio">
-  <meta property="og:description" content="B.Tech CSE @ KIIT · AI & Flutter projects · 8.6 CGPA · Open to internships.">
-  <meta property="og:image" content="https://aashutoshkumargupta.netlify.app/assets/images/og-cover.png">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Aashutosh Kumar Gupta — Developer Portfolio">
-  <meta name="twitter:description" content="B.Tech CSE @ KIIT · 8.6 CGPA · Open to internships.">
+  <meta property="og:description" content="B.Tech CSE @ KIIT · AI & Flutter · 8.6 CGPA · Open to internships.">
   <meta name="theme-color" content="#c9a84c">
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
@@ -28,11 +24,41 @@
 </head>
 <body>
 
-<!-- Noise texture overlay -->
 <div class="noise" aria-hidden="true"></div>
-
-<!-- Scroll progress -->
 <div id="scroll-progress" aria-hidden="true"></div>
+
+<!-- ═══════ PROJECT DETAIL MODAL ═══════ -->
+<div id="projectModal" class="modal" role="dialog" aria-modal="true" aria-label="Project Details" hidden>
+  <div class="modal-backdrop" id="projectModalBackdrop"></div>
+  <div class="modal-panel">
+    <button class="modal-close" id="projectModalClose" aria-label="Close">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="modal-body" id="projectModalBody"></div>
+  </div>
+</div>
+
+<!-- ═══════ CERT DETAIL MODAL ═══════ -->
+<div id="certModal" class="modal" role="dialog" aria-modal="true" aria-label="Certification Details" hidden>
+  <div class="modal-backdrop" id="certModalBackdrop"></div>
+  <div class="modal-panel modal-panel-sm">
+    <button class="modal-close" id="certModalClose" aria-label="Close">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="modal-body" id="certModalBody"></div>
+  </div>
+</div>
+
+<!-- ═══════ RESUME MODAL ═══════ -->
+<div id="resumeModal" class="modal" role="dialog" aria-modal="true" aria-label="Resume" hidden>
+  <div class="modal-backdrop" id="resumeModalBackdrop"></div>
+  <div class="modal-panel modal-panel-resume">
+    <button class="modal-close" id="resumeModalClose" aria-label="Close">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="modal-body" id="resumeModalBody"></div>
+  </div>
+</div>
 
 <!-- ═══════ NAVBAR ═══════ -->
 <nav id="navbar">
@@ -47,10 +73,10 @@
     <li><a href="#contact">Contact</a></li>
   </ul>
   <div class="nav-end">
-    <a href="assets/resume.pdf" download class="btn-nav-dl">
+    <button class="btn-nav-dl" id="navResumeBtn">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       Resume
-    </a>
+    </button>
     <a href="#contact" class="btn-hire">
       <span>Hire Me</span>
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
@@ -77,7 +103,6 @@
 
 <!-- ═══════ HERO ═══════ -->
 <section id="hero">
-  <!-- Background layers (purely decorative) -->
   <div class="hero-bg" aria-hidden="true">
     <div class="bg-blob bg-blob-1"></div>
     <div class="bg-blob bg-blob-2"></div>
@@ -86,49 +111,31 @@
     <div class="bg-radial"></div>
   </div>
 
-  <!-- Main layout: text | photo -->
   <div class="hero-body">
 
-    <!-- ── LEFT: Text ── -->
+    <!-- LEFT: Text -->
     <div class="hero-text">
-
-      <!-- Status badge -->
       <div class="hero-badge" data-anim="0">
         <span class="badge-dot"></span>
         <span>Open to Internships &amp; Freelance</span>
       </div>
-
-      <!-- Name -->
       <h1 class="hero-name" data-anim="1">
         <span class="name-line name-white">Aashutosh</span>
         <span class="name-line name-gold">Kumar Gupta</span>
       </h1>
-
-      <!-- Role typing target -->
-      <p class="hero-role" id="heroRole" data-anim="2">
-        Computer Science Student · Software Developer · AI Enthusiast
-      </p>
-
-      <!-- Description -->
-      <p class="hero-desc" data-anim="3">
-        B.Tech CSE at KIIT University — crafting real-world software, 
-        from AI-powered mobile apps to autonomous robotics systems.
-      </p>
-
-      <!-- CTA row -->
+      <p class="hero-role" id="heroRole" data-anim="2">Computer Science Student · Software Developer · AI Enthusiast</p>
+      <p class="hero-desc" data-anim="3">B.Tech CSE at KIIT University — crafting real-world software, from AI-powered mobile apps to autonomous robotics systems.</p>
       <div class="hero-cta" data-anim="4">
         <a href="#projects" class="btn-primary">
           View Projects
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </a>
-        <a href="assets/resume.pdf" download class="btn-secondary">
-          Download CV
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        </a>
+        <button class="btn-secondary" id="heroResumeBtn">
+          View Resume
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="9" y1="7" x2="15" y2="7"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
+        </button>
         <a href="#contact" class="btn-tertiary">Contact Me</a>
       </div>
-
-      <!-- Social links -->
       <div class="hero-socials" data-anim="5">
         <a href="https://www.linkedin.com/in/aashutosh-gupta-b6b7453a6" target="_blank" rel="noopener" aria-label="LinkedIn" class="soc-link">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
@@ -145,10 +152,8 @@
       </div>
     </div>
 
-    <!-- ── RIGHT: Photo + floating cards ── -->
+    <!-- RIGHT: Photo + floating cards -->
     <div class="hero-visual" data-anim="2">
-
-      <!-- Floating card 1 — top-left of photo -->
       <div class="float-card float-card-1" aria-hidden="true">
         <div class="fc-icon">🟢</div>
         <div class="fc-content">
@@ -156,8 +161,6 @@
           <div class="fc-value">Open to Work</div>
         </div>
       </div>
-
-      <!-- Floating card 2 — bottom-right of photo -->
       <div class="float-card float-card-2" aria-hidden="true">
         <div class="fc-icon">🤖</div>
         <div class="fc-content">
@@ -165,39 +168,26 @@
           <div class="fc-value">AI/ML Developer</div>
         </div>
       </div>
-
-      <!-- Floating card 3 — bottom-left of photo -->
       <div class="float-card float-card-3" aria-hidden="true">
         <div class="fc-big">8.6</div>
         <div class="fc-label">CGPA · KIIT</div>
       </div>
 
-      <!-- ── Profile photo ── -->
       <div class="photo-wrap">
-        <!-- Outer decorative rings -->
         <div class="photo-ring-outer"></div>
         <div class="photo-ring-mid"></div>
-        <!-- Animated glow aura -->
         <div class="photo-glow"></div>
-        <!-- Spinning dashed border accent -->
         <div class="photo-spin-ring"></div>
-        <!-- The actual circular photo -->
         <div class="photo-ring">
-          <img
-            src="assets/images/profile.jpg"
-            alt="Aashutosh Kumar Gupta — Software Developer"
-            class="profile-img"
-            loading="eager"
-            onerror="this.style.display='none';document.getElementById('photo-fb').style.display='flex';"
-          >
+          <img src="assets/images/profile.jpg" alt="Aashutosh Kumar Gupta" class="profile-img" loading="eager"
+            onerror="this.style.display='none';document.getElementById('photo-fb').style.display='flex';">
           <div id="photo-fb" class="photo-fallback" aria-hidden="true">AKG</div>
         </div>
       </div>
-
     </div>
+
   </div>
 
-  <!-- Scroll indicator -->
   <div class="scroll-hint" aria-hidden="true">
     <div class="scroll-hint-line"></div>
     <span>Scroll</span>
@@ -211,46 +201,27 @@
       <p class="eyebrow">01 — About Me</p>
       <h2 class="sec-title">Building Skills.<br><em>Solving Problems.</em></h2>
     </div>
-
     <div class="about-grid">
       <div class="about-text reveal">
         <p class="body">I'm <strong>Aashutosh Kumar Gupta</strong>, a disciplined Computer Science student at KIIT University, Bhubaneswar — driven by deep interest in software development, artificial intelligence, and building solutions that address real-world challenges.</p>
         <p class="body">My approach is hands-on. From AI-powered mobile apps to autonomous Raspberry Pi robotics, I pursue technical challenges that push my limits. I'm actively developing backend, DSA, and AI/ML skills while maintaining strong academic performance.</p>
-
         <div class="about-tags">
           <span class="about-tag">🎯 Problem Solver</span>
           <span class="about-tag">🚀 Self-Driven</span>
           <span class="about-tag">🤖 AI Enthusiast</span>
-          <span class="about-tag">🏗 Backend Dev</span>
+          <span class="about-tag">📊 Data Focused</span>
         </div>
-
         <div class="stats-row">
-          <div class="stat-card reveal">
-            <div class="stat-num">8.6</div>
-            <div class="stat-lbl">Current CGPA</div>
-          </div>
-          <div class="stat-card reveal">
-            <div class="stat-num">2027</div>
-            <div class="stat-lbl">Graduating</div>
-          </div>
-          <div class="stat-card reveal">
-            <div class="stat-num">2+</div>
-            <div class="stat-lbl">Projects</div>
-          </div>
-          <div class="stat-card reveal">
-            <div class="stat-num">5+</div>
-            <div class="stat-lbl">Technologies</div>
-          </div>
+          <div class="stat-card reveal"><div class="stat-num">8.6</div><div class="stat-lbl">CGPA</div></div>
+          <div class="stat-card reveal"><div class="stat-num">2027</div><div class="stat-lbl">Graduating</div></div>
+          <div class="stat-card reveal"><div class="stat-num">2+</div><div class="stat-lbl">Projects</div></div>
+          <div class="stat-card reveal"><div class="stat-num">5+</div><div class="stat-lbl">Technologies</div></div>
         </div>
       </div>
-
       <div class="about-cards reveal">
         <div class="glass-card edu-card">
           <div class="glass-card-accent"></div>
-          <div class="edu-header">
-            <span class="edu-emoji">🎓</span>
-            <span class="edu-label">Education</span>
-          </div>
+          <div class="edu-header"><span class="edu-emoji">🎓</span><span class="edu-label">Education</span></div>
           <div class="edu-deg">B.Tech — Computer Science &amp; Engineering</div>
           <div class="edu-uni">KIIT University, Bhubaneswar</div>
           <div class="edu-pills">
@@ -259,17 +230,14 @@
             <span class="pill">Odisha, India</span>
           </div>
         </div>
-
         <div class="glass-card focus-card">
           <div class="glass-card-accent"></div>
-          <div class="focus-title">
-            <span>⚡</span> Current Focus
-          </div>
+          <div class="focus-title"><span>⚡</span> Current Focus</div>
           <ul class="focus-list">
             <li>Data Structures &amp; Algorithms</li>
             <li>Backend Development with Node.js</li>
             <li>AI/ML Integration in Applications</li>
-            <li>Database Design with MySQL</li>
+            <li>Database Design with MySQL &amp; Excel</li>
             <li>Production-Ready Portfolio Building</li>
           </ul>
         </div>
@@ -285,90 +253,8 @@
       <p class="eyebrow">02 — Skills</p>
       <h2 class="sec-title">Technical <em>Toolkit</em></h2>
     </div>
-
-    <div class="skills-grid">
-
-      <div class="sk-card reveal" style="--sk-color: #a78bfa;">
-        <div class="sk-card-glow"></div>
-        <div class="sk-header">
-          <span class="sk-emoji">⌨️</span>
-          <span class="sk-title">Languages</span>
-        </div>
-        <div class="tags">
-          <span class="tag">C</span><span class="tag">Java</span>
-          <span class="tag">Python</span><span class="tag">JavaScript</span><span class="tag">Dart</span>
-        </div>
-        <div class="sk-bars">
-          <div class="bar-row"><label>Python</label><span>75%</span><div class="track"><div class="fill" data-w=".75"></div></div></div>
-          <div class="bar-row"><label>Java</label><span>70%</span><div class="track"><div class="fill" data-w=".70"></div></div></div>
-          <div class="bar-row"><label>C</label><span>68%</span><div class="track"><div class="fill" data-w=".68"></div></div></div>
-        </div>
-      </div>
-
-      <div class="sk-card reveal" style="--sk-color: #34d399;">
-        <div class="sk-card-glow"></div>
-        <div class="sk-header">
-          <span class="sk-emoji">🌐</span>
-          <span class="sk-title">Web &amp; Mobile</span>
-        </div>
-        <div class="tags">
-          <span class="tag">HTML5</span><span class="tag">CSS3</span>
-          <span class="tag">Flutter</span><span class="tag">Node.js</span><span class="tag">REST APIs</span>
-        </div>
-      </div>
-
-      <div class="sk-card reveal" style="--sk-color: #60a5fa;">
-        <div class="sk-card-glow"></div>
-        <div class="sk-header">
-          <span class="sk-emoji">🗄️</span>
-          <span class="sk-title">Database &amp; Tools</span>
-        </div>
-        <div class="tags">
-          <span class="tag">MySQL</span><span class="tag">Git</span>
-          <span class="tag">GitHub</span><span class="tag">MS Excel</span><span class="tag">Sheets</span>
-        </div>
-      </div>
-
-      <div class="sk-card reveal" style="--sk-color: #f59e0b;">
-        <div class="sk-card-glow"></div>
-        <div class="sk-header">
-          <span class="sk-emoji">🧠</span>
-          <span class="sk-title">Core CS</span>
-        </div>
-        <div class="tags">
-          <span class="tag">DSA</span><span class="tag">OOP</span>
-          <span class="tag">DBMS</span><span class="tag">OS</span><span class="tag">Networking</span>
-        </div>
-        <div class="sk-bars">
-          <div class="bar-row"><label>DSA</label><span>72%</span><div class="track"><div class="fill" data-w=".72"></div></div></div>
-          <div class="bar-row"><label>OOP</label><span>80%</span><div class="track"><div class="fill" data-w=".80"></div></div></div>
-        </div>
-      </div>
-
-      <div class="sk-card reveal" style="--sk-color: #f472b6;">
-        <div class="sk-card-glow"></div>
-        <div class="sk-header">
-          <span class="sk-emoji">🤖</span>
-          <span class="sk-title">Emerging Tech</span>
-        </div>
-        <div class="tags">
-          <span class="tag">AI / ML</span><span class="tag">Raspberry Pi</span>
-          <span class="tag">IoT</span><span class="tag">OpenCV</span><span class="tag">Gemini API</span>
-        </div>
-      </div>
-
-      <div class="sk-card reveal" style="--sk-color: #c9a84c;">
-        <div class="sk-card-glow"></div>
-        <div class="sk-header">
-          <span class="sk-emoji">🤝</span>
-          <span class="sk-title">Soft Skills</span>
-        </div>
-        <div class="tags">
-          <span class="tag">Self-Driven</span><span class="tag">Analytical</span>
-          <span class="tag">Collaborative</span><span class="tag">Documentation</span>
-        </div>
-      </div>
-
+    <div class="skills-grid" id="skillsGrid">
+      <!-- Rendered by JS from data.js -->
     </div>
   </div>
 </section>
@@ -379,32 +265,28 @@
     <div class="section-header reveal">
       <p class="eyebrow">03 — Projects</p>
       <h2 class="sec-title">Selected <em>Work</em></h2>
+      <p class="section-hint">Click any project to explore the full case study →</p>
     </div>
 
-    <!-- FEATURED PROJECT -->
-    <article class="proj-featured reveal">
-      <div class="pf-badge">⭐ Featured Project</div>
+    <!-- Featured -->
+    <article class="proj-featured reveal" id="proj-featured" data-project="truthlens" role="button" tabindex="0">
+      <div class="pf-badge">⭐ Featured — Click to Explore</div>
       <div class="pf-inner">
         <div class="pf-text">
           <div class="pf-num">01</div>
           <h3 class="pf-title">TruthLens</h3>
           <p class="pf-tag">AI-Powered Misinformation Detection App</p>
-          <p class="pf-desc">An intelligent mobile application combating digital misinformation using multi-modal AI — detecting fake news, analyzing deepfakes, and surfacing credibility scores in real time. Built as a cross-platform solution reaching users across devices.</p>
+          <p class="pf-desc">An intelligent mobile app combating digital misinformation using multi-modal AI — detecting fake news, analyzing deepfakes, and surfacing credibility scores in real time.</p>
           <ul class="pf-feats">
             <li>Real-time fake news credibility scoring via NLP</li>
             <li>Deepfake image detection using computer vision</li>
             <li>Google Gemini API multi-modal integration</li>
-            <li>Cross-platform Flutter UI with offline support</li>
+            <li>Cross-platform Flutter UI</li>
           </ul>
-          <div class="pf-tech">
-            <span>Flutter</span><span>Google Gemini</span><span>Dart</span><span>AI/ML</span><span>REST API</span><span>NLP</span>
-          </div>
-          <div class="pf-actions">
-            <a href="https://github.com/aashutoshg01-ui" target="_blank" rel="noopener" class="btn-primary">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
-              View on GitHub
-            </a>
-            <a href="#contact" class="btn-secondary">Case Study</a>
+          <div class="pf-tech"><span>Flutter</span><span>Google Gemini</span><span>Dart</span><span>AI/ML</span><span>REST API</span></div>
+          <div class="pf-explore-hint">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            Click to view full case study
           </div>
         </div>
         <div class="pf-visual">
@@ -419,10 +301,7 @@
                   <div class="mockup-tag red">Deepfake ✗</div>
                 </div>
                 <div class="mockup-score">
-                  <div class="mockup-circle">
-                    <span>87%</span>
-                    <small>Credibility</small>
-                  </div>
+                  <div class="mockup-circle"><span>87%</span><small>Credibility</small></div>
                 </div>
               </div>
             </div>
@@ -431,48 +310,9 @@
       </div>
     </article>
 
-    <!-- Secondary projects grid -->
-    <div class="projects-grid">
-
-      <article class="proj-card reveal">
-        <div class="proj-card-glow"></div>
-        <div class="proj-inner">
-          <div class="proj-num-label">02</div>
-          <h3 class="proj-title">AI Robot</h3>
-          <p class="proj-sub">Autonomous Raspberry Pi Robotics System</p>
-          <p class="proj-desc">Hardware-software robotics combining sensor arrays, camera vision, and autonomous movement — an intelligent robot that navigates and responds to its environment without human input.</p>
-          <ul class="proj-feats">
-            <li>Autonomous obstacle detection &amp; navigation</li>
-            <li>Camera integration for visual input</li>
-            <li>Multi-sensor data fusion</li>
-            <li>Python AI control scripts</li>
-          </ul>
-          <div class="proj-tech">
-            <span>Raspberry Pi</span><span>Python</span><span>OpenCV</span><span>Sensors</span><span>IoT</span>
-          </div>
-          <div class="proj-links">
-            <a href="https://github.com/aashutoshg01-ui" target="_blank" rel="noopener" class="proj-btn-gold">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
-              GitHub
-            </a>
-            <a href="#contact" class="proj-btn-ghost">Details →</a>
-          </div>
-        </div>
-      </article>
-
-      <article class="proj-card proj-card-upcoming reveal">
-        <div class="upcoming-inner">
-          <div class="upcoming-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-          </div>
-          <p class="upcoming-ttl">Next Project</p>
-          <p class="upcoming-sub">Currently in development.<br>New work dropping soon.</p>
-          <div class="upcoming-dots">
-            <span></span><span></span><span></span>
-          </div>
-        </div>
-      </article>
-
+    <!-- Secondary grid -->
+    <div class="projects-grid" id="projectsGrid">
+      <!-- Rendered by JS -->
     </div>
   </div>
 </section>
@@ -483,63 +323,10 @@
     <div class="section-header reveal">
       <p class="eyebrow">04 — Certifications &amp; Achievements</p>
       <h2 class="sec-title">Learning <em>Milestones</em></h2>
+      <p class="section-hint">Click any certification to see details →</p>
     </div>
-
-    <div class="certs-grid">
-      <div class="cert-card reveal">
-        <div class="cert-glow"></div>
-        <div class="cert-icon-wrap"><span>🎓</span></div>
-        <div class="cert-body">
-          <div class="cert-ttl">Data Structures &amp; Algorithms</div>
-          <div class="cert-org">Academic / Self-Study</div>
-          <div class="cert-dsc">Sorting, trees, graphs, dynamic programming, and competitive problem solving.</div>
-        </div>
-      </div>
-      <div class="cert-card reveal">
-        <div class="cert-glow"></div>
-        <div class="cert-icon-wrap"><span>🤖</span></div>
-        <div class="cert-body">
-          <div class="cert-ttl">AI &amp; ML Fundamentals</div>
-          <div class="cert-org">Online Coursework</div>
-          <div class="cert-dsc">Core ML concepts, model training, and AI API integration including Google Gemini.</div>
-        </div>
-      </div>
-      <div class="cert-card reveal">
-        <div class="cert-glow"></div>
-        <div class="cert-icon-wrap"><span>🗄️</span></div>
-        <div class="cert-body">
-          <div class="cert-ttl">Database Management Systems</div>
-          <div class="cert-org">KIIT University</div>
-          <div class="cert-dsc">Relational design, SQL optimization, normalization, and DBMS principles.</div>
-        </div>
-      </div>
-      <div class="cert-card reveal">
-        <div class="cert-glow"></div>
-        <div class="cert-icon-wrap"><span>📱</span></div>
-        <div class="cert-body">
-          <div class="cert-ttl">Flutter Mobile Development</div>
-          <div class="cert-org">Self-Directed Learning</div>
-          <div class="cert-dsc">Cross-platform app development with Flutter &amp; Dart — applied in TruthLens.</div>
-        </div>
-      </div>
-      <div class="cert-card reveal">
-        <div class="cert-glow"></div>
-        <div class="cert-icon-wrap"><span>🖥️</span></div>
-        <div class="cert-body">
-          <div class="cert-ttl">Operating Systems &amp; Networks</div>
-          <div class="cert-org">KIIT University</div>
-          <div class="cert-dsc">Process management, memory, networking protocols, and system-level programming.</div>
-        </div>
-      </div>
-      <div class="cert-card reveal">
-        <div class="cert-glow"></div>
-        <div class="cert-icon-wrap"><span>⚡</span></div>
-        <div class="cert-body">
-          <div class="cert-ttl">CGPA Excellence — 8.6</div>
-          <div class="cert-org">KIIT University, 2023–Present</div>
-          <div class="cert-dsc">Consistent academic achievement across CS and engineering coursework.</div>
-        </div>
-      </div>
+    <div class="certs-grid" id="certsGrid">
+      <!-- Rendered by JS from data.js -->
     </div>
   </div>
 </section>
@@ -549,15 +336,18 @@
   <div class="wrap">
     <div class="resume-box reveal">
       <div class="resume-box-glow"></div>
-      <p class="resume-eyebrow">Available for Download</p>
+      <p class="resume-eyebrow">Available Now</p>
       <h2 class="resume-title">My Resume</h2>
-      <p class="body">A complete overview of my academic background, technical skills, project experience, and career objectives — ready to share with recruiters and collaborators.</p>
+      <p class="body">A complete overview of my academic background, technical skills, project experience, and career objectives. Click "View Resume" to explore interactively.</p>
       <div class="resume-actions">
-        <a href="assets/resume.pdf" download class="btn-primary">
+        <button class="btn-primary" id="resumeSectionBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="9" y1="7" x2="15" y2="7"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
+          View Resume
+        </button>
+        <a href="assets/resume.pdf" download class="btn-secondary">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Download Resume
+          Download PDF
         </a>
-        <a href="mailto:aashutoshg01@gmail.com?subject=Resume Request" class="btn-secondary">Request via Email</a>
       </div>
     </div>
   </div>
@@ -570,86 +360,41 @@
       <p class="eyebrow">05 — Get In Touch</p>
       <h2 class="sec-title">Let's <em>Connect</em></h2>
     </div>
-
     <div class="contact-grid">
-
-      <!-- Info -->
       <div class="contact-info reveal">
-        <p class="body">Whether you have an internship opportunity, a freelance project, or simply want to connect — I'd love to hear from you. I'm always open to genuine conversations.</p>
-
+        <p class="body">Whether you have an internship opportunity, a freelance project, or simply want to connect — I'd love to hear from you.</p>
         <a href="mailto:aashutoshg01@gmail.com" class="cinfo-item">
-          <div class="cinfo-ico">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-          </div>
-          <div class="cinfo-text">
-            <span class="cinfo-lbl">Email</span>
-            <span class="cinfo-val">aashutoshg01@gmail.com</span>
-          </div>
+          <div class="cinfo-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+          <div class="cinfo-text"><span class="cinfo-lbl">Email</span><span class="cinfo-val">aashutoshg01@gmail.com</span></div>
           <div class="cinfo-arrow">→</div>
         </a>
-
         <a href="tel:+916287177572" class="cinfo-item">
-          <div class="cinfo-ico">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.56 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.06 6.06l1.27-.84a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-          </div>
-          <div class="cinfo-text">
-            <span class="cinfo-lbl">Phone</span>
-            <span class="cinfo-val">+91 6287177572</span>
-          </div>
+          <div class="cinfo-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.56 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.06 6.06l1.27-.84a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
+          <div class="cinfo-text"><span class="cinfo-lbl">Phone</span><span class="cinfo-val">+91 6287177572</span></div>
           <div class="cinfo-arrow">→</div>
         </a>
-
         <a href="https://www.linkedin.com/in/aashutosh-gupta-b6b7453a6" target="_blank" rel="noopener" class="cinfo-item">
-          <div class="cinfo-ico">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-          </div>
-          <div class="cinfo-text">
-            <span class="cinfo-lbl">LinkedIn</span>
-            <span class="cinfo-val">aashutosh-gupta-b6b7453a6</span>
-          </div>
+          <div class="cinfo-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></div>
+          <div class="cinfo-text"><span class="cinfo-lbl">LinkedIn</span><span class="cinfo-val">aashutosh-gupta-b6b7453a6</span></div>
           <div class="cinfo-arrow">→</div>
         </a>
-
         <a href="https://github.com/aashutoshg01-ui" target="_blank" rel="noopener" class="cinfo-item">
-          <div class="cinfo-ico">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
-          </div>
-          <div class="cinfo-text">
-            <span class="cinfo-lbl">GitHub</span>
-            <span class="cinfo-val">aashutoshg01-ui</span>
-          </div>
+          <div class="cinfo-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></div>
+          <div class="cinfo-text"><span class="cinfo-lbl">GitHub</span><span class="cinfo-val">aashutoshg01-ui</span></div>
           <div class="cinfo-arrow">→</div>
         </a>
       </div>
-
-      <!-- Form -->
       <form class="contact-form reveal" id="contactForm" novalidate>
         <div class="form-2col">
-          <div class="field">
-            <label for="f-name">Your Name</label>
-            <input type="text" id="f-name" name="from_name" placeholder="John Doe" required autocomplete="name">
-          </div>
-          <div class="field">
-            <label for="f-email">Email Address</label>
-            <input type="email" id="f-email" name="from_email" placeholder="john@company.com" required autocomplete="email">
-          </div>
+          <div class="field"><label for="f-name">Your Name</label><input type="text" id="f-name" name="from_name" placeholder="John Doe" required autocomplete="name"></div>
+          <div class="field"><label for="f-email">Email Address</label><input type="email" id="f-email" name="from_email" placeholder="john@company.com" required autocomplete="email"></div>
         </div>
-        <div class="field">
-          <label for="f-subject">Subject</label>
-          <input type="text" id="f-subject" name="subject" placeholder="Internship / Collaboration / Project" required>
-        </div>
-        <div class="field">
-          <label for="f-msg">Message</label>
-          <textarea id="f-msg" name="message" rows="5" placeholder="Tell me about the opportunity or what you'd like to discuss..." required></textarea>
-        </div>
+        <div class="field"><label for="f-subject">Subject</label><input type="text" id="f-subject" name="subject" placeholder="Internship / Collaboration / Project" required></div>
+        <div class="field"><label for="f-msg">Message</label><textarea id="f-msg" name="message" rows="5" placeholder="Tell me about the opportunity..." required></textarea></div>
         <div id="fs-ok"  class="form-status ok"  role="alert" aria-live="polite" hidden>✅ Message sent! I'll reply within 24 hours.</div>
-        <div id="fs-err" class="form-status err" role="alert" aria-live="polite" hidden>❌ Failed to send. Email me at <a href="mailto:aashutoshg01@gmail.com">aashutoshg01@gmail.com</a></div>
-        <button type="submit" class="form-btn" id="formBtn">
-          Send Message
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-        </button>
+        <div id="fs-err" class="form-status err" role="alert" aria-live="polite" hidden>❌ Failed. Email me at <a href="mailto:aashutoshg01@gmail.com">aashutoshg01@gmail.com</a></div>
+        <button type="submit" class="form-btn" id="formBtn">Send Message <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
       </form>
-
     </div>
   </div>
 </section>
@@ -664,22 +409,13 @@
           <p class="foot-tagline">B.Tech CSE · KIIT University · Batch 2027</p>
         </div>
         <div class="footer-nav">
-          <a href="#about">About</a>
-          <a href="#skills">Skills</a>
-          <a href="#projects">Projects</a>
-          <a href="#certifications">Certs</a>
-          <a href="#contact">Contact</a>
+          <a href="#about">About</a><a href="#skills">Skills</a>
+          <a href="#projects">Projects</a><a href="#certifications">Certs</a><a href="#contact">Contact</a>
         </div>
         <div class="footer-social">
-          <a href="https://www.linkedin.com/in/aashutosh-gupta-b6b7453a6" target="_blank" rel="noopener" aria-label="LinkedIn" class="soc-link">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-          </a>
-          <a href="https://github.com/aashutoshg01-ui" target="_blank" rel="noopener" aria-label="GitHub" class="soc-link">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
-          </a>
-          <a href="mailto:aashutoshg01@gmail.com" aria-label="Email" class="soc-link">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-          </a>
+          <a href="https://www.linkedin.com/in/aashutosh-gupta-b6b7453a6" target="_blank" rel="noopener" aria-label="LinkedIn" class="soc-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="https://github.com/aashutoshg01-ui" target="_blank" rel="noopener" aria-label="GitHub" class="soc-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+          <a href="mailto:aashutoshg01@gmail.com" aria-label="Email" class="soc-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></a>
         </div>
       </div>
       <div class="footer-bottom">
@@ -694,6 +430,7 @@
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
 </button>
 
+<script src="data.js"></script>
 <script src="script.js" defer></script>
 </body>
 </html>
