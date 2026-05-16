@@ -55,6 +55,10 @@ document.addEventListener('DOMContentLoaded', () => {
   initSmoothScroll();
   initContactForm();
   initParallax();
+  
+  initCustomCursor();
+  initTiltEffect();
+  initThreeJSAvatar();
 });
 
 /* ─────────────────────────────────────
@@ -664,4 +668,204 @@ function initParallax() {
       b.style.transform = `translate(${cx * f}px,${cy * f}px)`;
     });
   }, { passive: true });
+}
+
+/* ─────────────────────────────────────
+   11. CUSTOM CURSOR
+───────────────────────────────────── */
+function initCustomCursor() {
+  const dot = document.getElementById('cursor-dot');
+  const glow = document.getElementById('cursor-glow');
+  if (!dot || !glow) return;
+
+  window.addEventListener('mousemove', e => {
+    dot.style.left = e.clientX + 'px';
+    dot.style.top = e.clientY + 'px';
+    
+    // Smooth follow for glow
+    glow.animate({
+      left: e.clientX + 'px',
+      top: e.clientY + 'px'
+    }, { duration: 500, fill: 'forwards' });
+  });
+
+  const hoverElements = document.querySelectorAll('a, button, input, textarea, [role="button"], .proj-card, .cert-card, .nav-logo');
+  hoverElements.forEach(el => {
+    el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+    el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+  });
+}
+
+/* ─────────────────────────────────────
+   12. TILT EFFECT
+───────────────────────────────────── */
+function initTiltEffect() {
+  const cards = document.querySelectorAll('.proj-card, .cert-card, .glass-card');
+  cards.forEach(card => {
+    card.classList.add('tilt-card');
+    const inner = card.firstElementChild || card;
+    if(inner !== card) inner.classList.add('tilt-card-inner');
+    
+    card.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const rotateX = ((y - centerY) / centerY) * -10;
+      const rotateY = ((x - centerX) / centerX) * 10;
+      
+      card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+    });
+    
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+    });
+  });
+}
+
+/* ─────────────────────────────────────
+   13. THREE.JS 3D AVATAR
+───────────────────────────────────── */
+function initThreeJSAvatar() {
+  const container = document.getElementById('hero-3d-canvas');
+  if (!container || typeof THREE === 'undefined') return;
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+  camera.position.z = 15;
+
+  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+  renderer.setSize(container.clientWidth, container.clientHeight);
+  renderer.setPixelRatio(window.devicePixelRatio);
+  container.appendChild(renderer.domElement);
+
+  // Group to hold the robot/avatar parts
+  const avatar = new THREE.Group();
+  scene.add(avatar);
+
+  // Core Sphere
+  const coreGeom = new THREE.IcosahedronGeometry(2.5, 2);
+  const coreMat = new THREE.MeshPhysicalMaterial({
+    color: 0xc9a84c,
+    emissive: 0x4a3a10,
+    roughness: 0.2,
+    metalness: 0.8,
+    wireframe: true,
+    transparent: true,
+    opacity: 0.8
+  });
+  const core = new THREE.Mesh(coreGeom, coreMat);
+  avatar.add(core);
+
+  // Inner solid core
+  const innerGeom = new THREE.IcosahedronGeometry(1.8, 1);
+  const innerMat = new THREE.MeshStandardMaterial({
+    color: 0x0c1120,
+    metalness: 0.9,
+    roughness: 0.1
+  });
+  const innerCore = new THREE.Mesh(innerGeom, innerMat);
+  avatar.add(innerCore);
+
+  // Orbiting Rings
+  const ringGeom = new THREE.TorusGeometry(4.2, 0.05, 16, 100);
+  const ringMat1 = new THREE.MeshBasicMaterial({ color: 0xc9a84c, transparent: true, opacity: 0.6 });
+  const ringMat2 = new THREE.MeshBasicMaterial({ color: 0x60a5fa, transparent: true, opacity: 0.4 });
+  
+  const ring1 = new THREE.Mesh(ringGeom, ringMat1);
+  ring1.rotation.x = Math.PI / 2;
+  avatar.add(ring1);
+
+  const ring2 = new THREE.Mesh(ringGeom, ringMat2);
+  ring2.rotation.y = Math.PI / 2;
+  avatar.add(ring2);
+
+  const ring3 = new THREE.Mesh(ringGeom, ringMat1);
+  ring3.rotation.x = Math.PI / 4;
+  ring3.rotation.y = Math.PI / 4;
+  avatar.add(ring3);
+
+  // Particles
+  const particleGeom = new THREE.BufferGeometry();
+  const particleCount = 150;
+  const posArray = new Float32Array(particleCount * 3);
+  for(let i=0; i<particleCount*3; i++) {
+    posArray[i] = (Math.random() - 0.5) * 18;
+  }
+  particleGeom.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+  const particleMat = new THREE.PointsMaterial({
+    size: 0.08,
+    color: 0xc9a84c,
+    transparent: true,
+    opacity: 0.5,
+    blending: THREE.AdditiveBlending
+  });
+  const particles = new THREE.Points(particleGeom, particleMat);
+  scene.add(particles);
+
+  // Lighting
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+  scene.add(ambientLight);
+
+  const pointLight1 = new THREE.PointLight(0xc9a84c, 2, 50);
+  pointLight1.position.set(5, 5, 5);
+  scene.add(pointLight1);
+
+  const pointLight2 = new THREE.PointLight(0x60a5fa, 1.5, 50);
+  pointLight2.position.set(-5, -5, 5);
+  scene.add(pointLight2);
+
+  // Mouse Interaction
+  let mouseX = 0;
+  let mouseY = 0;
+  let targetX = 0;
+  let targetY = 0;
+  const windowHalfX = window.innerWidth / 2;
+  const windowHalfY = window.innerHeight / 2;
+
+  document.addEventListener('mousemove', (event) => {
+    mouseX = (event.clientX - windowHalfX);
+    mouseY = (event.clientY - windowHalfY);
+  });
+
+  // Animation Loop
+  const clock = new THREE.Clock();
+
+  function animate() {
+    requestAnimationFrame(animate);
+    const elapsedTime = clock.getElapsedTime();
+
+    targetX = mouseX * 0.001;
+    targetY = mouseY * 0.001;
+
+    // Smooth follow
+    avatar.rotation.y += 0.05 * (targetX - avatar.rotation.y);
+    avatar.rotation.x += 0.05 * (targetY - avatar.rotation.x);
+
+    // Idle animations
+    core.rotation.x += 0.002;
+    core.rotation.y += 0.003;
+    innerCore.rotation.x -= 0.001;
+    innerCore.rotation.y += 0.002;
+    
+    ring1.rotation.y += 0.005;
+    ring2.rotation.x += 0.006;
+    ring3.rotation.z += 0.004;
+
+    // Floating effect
+    avatar.position.y = Math.sin(elapsedTime * 1.5) * 0.6;
+
+    particles.rotation.y = elapsedTime * 0.05;
+
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  // Resize handler
+  window.addEventListener('resize', () => {
+    camera.aspect = container.clientWidth / container.clientHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(container.clientWidth, container.clientHeight);
+  });
 }
