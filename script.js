@@ -733,101 +733,108 @@ function initThreeJSAvatar() {
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-  camera.position.z = 15;
+  camera.position.z = 18;
 
   const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
   renderer.setSize(container.clientWidth, container.clientHeight);
   renderer.setPixelRatio(window.devicePixelRatio);
   container.appendChild(renderer.domElement);
 
-  // Group to hold the robot/avatar parts
+  // Main Robot Group
   const avatar = new THREE.Group();
   scene.add(avatar);
 
-  // Core Sphere
-  const coreGeom = new THREE.IcosahedronGeometry(2.5, 2);
-  const coreMat = new THREE.MeshPhysicalMaterial({
-    color: 0xc9a84c,
-    emissive: 0x4a3a10,
-    roughness: 0.2,
-    metalness: 0.8,
-    wireframe: true,
-    transparent: true,
-    opacity: 0.8
-  });
+  // 1. Robot Head
+  const headGroup = new THREE.Group();
+  headGroup.position.y = 1.5;
+  avatar.add(headGroup);
+
+  const headGeom = new THREE.BoxGeometry(2.2, 1.8, 2.2);
+  const headMat = new THREE.MeshPhysicalMaterial({ color: 0x0f172a, metalness: 0.9, roughness: 0.1, clearcoat: 1.0 });
+  const head = new THREE.Mesh(headGeom, headMat);
+  headGroup.add(head);
+
+  // Robot Eye (Glowing)
+  const eyeGeom = new THREE.CylinderGeometry(0.6, 0.6, 0.2, 32);
+  eyeGeom.rotateX(Math.PI / 2);
+  const eyeMat = new THREE.MeshStandardMaterial({ color: 0x60a5fa, emissive: 0x3b82f6, emissiveIntensity: 2 });
+  const eye = new THREE.Mesh(eyeGeom, eyeMat);
+  eye.position.set(0, 0.2, 1.15);
+  headGroup.add(eye);
+
+  // 2. Robot Body (Floating Pyramid/Prism)
+  const bodyGroup = new THREE.Group();
+  bodyGroup.position.y = -2;
+  avatar.add(bodyGroup);
+
+  const bodyGeom = new THREE.ConeGeometry(1.8, 3.5, 4);
+  const bodyMat = new THREE.MeshStandardMaterial({ color: 0xc9a84c, metalness: 0.7, roughness: 0.3, wireframe: true });
+  const body = new THREE.Mesh(bodyGeom, bodyMat);
+  bodyGroup.add(body);
+
+  // Inner Core inside Body
+  const coreGeom = new THREE.OctahedronGeometry(1, 0);
+  const coreMat = new THREE.MeshStandardMaterial({ color: 0xc9a84c, emissive: 0x4a3a10, emissiveIntensity: 1 });
   const core = new THREE.Mesh(coreGeom, coreMat);
-  avatar.add(core);
+  bodyGroup.add(core);
 
-  // Inner solid core
-  const innerGeom = new THREE.IcosahedronGeometry(1.8, 1);
-  const innerMat = new THREE.MeshStandardMaterial({
-    color: 0x0c1120,
-    metalness: 0.9,
-    roughness: 0.1
-  });
-  const innerCore = new THREE.Mesh(innerGeom, innerMat);
-  avatar.add(innerCore);
-
-  // Orbiting Rings
-  const ringGeom = new THREE.TorusGeometry(4.2, 0.05, 16, 100);
-  const ringMat1 = new THREE.MeshBasicMaterial({ color: 0xc9a84c, transparent: true, opacity: 0.6 });
-  const ringMat2 = new THREE.MeshBasicMaterial({ color: 0x60a5fa, transparent: true, opacity: 0.4 });
+  // 3. Floating Orbitals (Shoulders/Hands)
+  const orbitalGeom = new THREE.IcosahedronGeometry(0.6, 0);
+  const orbitalMat = new THREE.MeshStandardMaterial({ color: 0x60a5fa, metalness: 0.5, roughness: 0.2 });
   
-  const ring1 = new THREE.Mesh(ringGeom, ringMat1);
-  ring1.rotation.x = Math.PI / 2;
-  avatar.add(ring1);
+  const leftOrbital = new THREE.Mesh(orbitalGeom, orbitalMat);
+  leftOrbital.position.set(-2.5, 0, 0);
+  bodyGroup.add(leftOrbital);
 
-  const ring2 = new THREE.Mesh(ringGeom, ringMat2);
-  ring2.rotation.y = Math.PI / 2;
-  avatar.add(ring2);
-
-  const ring3 = new THREE.Mesh(ringGeom, ringMat1);
-  ring3.rotation.x = Math.PI / 4;
-  ring3.rotation.y = Math.PI / 4;
-  avatar.add(ring3);
+  const rightOrbital = new THREE.Mesh(orbitalGeom, orbitalMat);
+  rightOrbital.position.set(2.5, 0, 0);
+  bodyGroup.add(rightOrbital);
 
   // Particles
   const particleGeom = new THREE.BufferGeometry();
-  const particleCount = 150;
+  const particleCount = 200;
   const posArray = new Float32Array(particleCount * 3);
   for(let i=0; i<particleCount*3; i++) {
-    posArray[i] = (Math.random() - 0.5) * 18;
+    posArray[i] = (Math.random() - 0.5) * 20;
   }
   particleGeom.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
   const particleMat = new THREE.PointsMaterial({
     size: 0.08,
     color: 0xc9a84c,
     transparent: true,
-    opacity: 0.5,
+    opacity: 0.6,
     blending: THREE.AdditiveBlending
   });
   const particles = new THREE.Points(particleGeom, particleMat);
   scene.add(particles);
 
   // Lighting
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
   scene.add(ambientLight);
 
   const pointLight1 = new THREE.PointLight(0xc9a84c, 2, 50);
-  pointLight1.position.set(5, 5, 5);
+  pointLight1.position.set(5, 5, 8);
   scene.add(pointLight1);
 
-  const pointLight2 = new THREE.PointLight(0x60a5fa, 1.5, 50);
-  pointLight2.position.set(-5, -5, 5);
+  const pointLight2 = new THREE.PointLight(0x60a5fa, 2, 50);
+  pointLight2.position.set(-5, -5, 8);
   scene.add(pointLight2);
 
-  // Mouse Interaction
+  // Interaction Tracking
   let mouseX = 0;
   let mouseY = 0;
-  let targetX = 0;
-  let targetY = 0;
   const windowHalfX = window.innerWidth / 2;
   const windowHalfY = window.innerHeight / 2;
+  let scrollY = window.scrollY;
 
   document.addEventListener('mousemove', (event) => {
     mouseX = (event.clientX - windowHalfX);
     mouseY = (event.clientY - windowHalfY);
   });
+
+  window.addEventListener('scroll', () => {
+    scrollY = window.scrollY;
+  }, { passive: true });
 
   // Animation Loop
   const clock = new THREE.Clock();
@@ -836,27 +843,51 @@ function initThreeJSAvatar() {
     requestAnimationFrame(animate);
     const elapsedTime = clock.getElapsedTime();
 
-    targetX = mouseX * 0.001;
-    targetY = mouseY * 0.001;
+    // 1. Mouse Tracking (Aligned with cursor)
+    const targetX = mouseX * 0.003;
+    const targetY = mouseY * 0.003;
 
-    // Smooth follow
-    avatar.rotation.y += 0.05 * (targetX - avatar.rotation.y);
-    avatar.rotation.x += 0.05 * (targetY - avatar.rotation.x);
+    // Head looks directly at cursor quickly
+    headGroup.rotation.y += 0.1 * (targetX - headGroup.rotation.y);
+    headGroup.rotation.x += 0.1 * (targetY - headGroup.rotation.x);
 
-    // Idle animations
-    core.rotation.x += 0.002;
-    core.rotation.y += 0.003;
-    innerCore.rotation.x -= 0.001;
-    innerCore.rotation.y += 0.002;
+    // Body follows slightly slower for a natural rig feel
+    bodyGroup.rotation.y += 0.05 * (targetX * 0.5 - bodyGroup.rotation.y);
+    bodyGroup.rotation.x += 0.05 * (targetY * 0.5 - bodyGroup.rotation.x);
+
+    // 2. Scroll Impact (Exploded View / Sliding Down)
+    // Normalize scroll from 0 to 1 over the first 600px of scroll
+    const scrollFactor = Math.min(scrollY / 600, 1);
+
+    // Impactful Edits on Scroll
+    // The head flies up and tilts
+    headGroup.position.y = 1.5 + (scrollFactor * 3);
+    headGroup.rotation.z = scrollFactor * Math.PI / 4;
     
-    ring1.rotation.y += 0.005;
-    ring2.rotation.x += 0.006;
-    ring3.rotation.z += 0.004;
+    // The body flies down and spins
+    bodyGroup.position.y = -2 - (scrollFactor * 4);
+    bodyGroup.rotation.z = -scrollFactor * Math.PI / 6;
+    
+    // Orbitals push outward
+    leftOrbital.position.x = -2.5 - (scrollFactor * 3);
+    rightOrbital.position.x = 2.5 + (scrollFactor * 3);
 
+    // Camera zooms in slightly on scroll
+    camera.position.z = 18 - (scrollFactor * 8);
+
+    // 3. Idle Animations
+    core.rotation.y = elapsedTime;
+    core.rotation.x = elapsedTime * 0.5;
+    
+    leftOrbital.rotation.x = elapsedTime;
+    leftOrbital.rotation.y = elapsedTime;
+    rightOrbital.rotation.x = -elapsedTime;
+    rightOrbital.rotation.y = -elapsedTime;
+    
     // Floating effect
-    avatar.position.y = Math.sin(elapsedTime * 1.5) * 0.6;
-
-    particles.rotation.y = elapsedTime * 0.05;
+    avatar.position.y = Math.sin(elapsedTime * 2) * 0.4 - (scrollFactor * 2);
+    
+    particles.rotation.y = elapsedTime * 0.03 + (scrollFactor * 0.5); // Particles spin faster on scroll
 
     renderer.render(scene, camera);
   }
