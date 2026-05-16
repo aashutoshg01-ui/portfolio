@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
 ───────────────────────────────────── */
 function renderSkills() {
   const grid = document.getElementById('skillsGrid');
-  if (!grid || !window.PORTFOLIO) return;
+  if (!grid || typeof PORTFOLIO === 'undefined') return;
 
   grid.innerHTML = PORTFOLIO.skills.map(sk => `
     <div class="sk-card reveal" style="--sk-color:${sk.color}">
@@ -98,7 +98,7 @@ function renderSkills() {
 ───────────────────────────────────── */
 function renderProjects() {
   const grid = document.getElementById('projectsGrid');
-  if (!grid || !window.PORTFOLIO) return;
+  if (!grid || typeof PORTFOLIO === 'undefined') return;
 
   const secondary = PORTFOLIO.projects.filter(p => !p.featured);
 
@@ -141,7 +141,7 @@ const CERT_ICONS = { dsa:'🎓', 'ai-ml':'🤖', dbms:'🗄️', flutter:'📱',
 
 function renderCerts() {
   const grid = document.getElementById('certsGrid');
-  if (!grid || !window.PORTFOLIO) return;
+  if (!grid || typeof PORTFOLIO === 'undefined') return;
 
   grid.innerHTML = PORTFOLIO.certifications.map(c => `
     <div class="cert-card reveal" data-cert="${c.id}" role="button" tabindex="0" aria-label="View ${c.title} details">
@@ -555,7 +555,7 @@ function initSkillBars() {
 ───────────────────────────────────── */
 function initTyping() {
   const el = document.getElementById('heroRole');
-  if (!el || !window.PORTFOLIO) return;
+  if (!el || typeof PORTFOLIO === 'undefined') return;
   const phrases = PORTFOLIO.typingPhrases;
   el.classList.add('typing');
   let pi = 0, ci = 0, del = false;
