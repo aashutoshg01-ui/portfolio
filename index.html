@@ -20,9 +20,14 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+<!-- Custom Cursor Elements -->
+<div id="cursor-dot" aria-hidden="true"></div>
+<div id="cursor-glow" aria-hidden="true"></div>
 
 <div class="noise" aria-hidden="true"></div>
 <div id="scroll-progress" aria-hidden="true"></div>
@@ -173,16 +178,8 @@
         <div class="fc-label">CGPA · KIIT</div>
       </div>
 
-      <div class="photo-wrap">
-        <div class="photo-ring-outer"></div>
-        <div class="photo-ring-mid"></div>
-        <div class="photo-glow"></div>
-        <div class="photo-spin-ring"></div>
-        <div class="photo-ring">
-          <img src="assets/images/profile.jpg" alt="Aashutosh Kumar Gupta" class="profile-img" loading="eager"
-            onerror="this.style.display='none';document.getElementById('photo-fb').style.display='flex';">
-          <div id="photo-fb" class="photo-fallback" aria-hidden="true">AKG</div>
-        </div>
+      <div class="photo-wrap" id="hero-3d-canvas">
+        <!-- 3D Canvas will be injected here -->
       </div>
     </div>
 
