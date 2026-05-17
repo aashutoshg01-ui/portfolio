@@ -59,6 +59,11 @@ document.addEventListener('DOMContentLoaded', () => {
   initCustomCursor();
   initTiltEffect();
   initThreeJSAvatar();
+  initMagneticButtons();
+  initSoundFX();
+  initAnimatedCounters();
+  initSectionReveals();
+  initSoundToggle();
 });
 
 /* ─────────────────────────────────────
@@ -634,6 +639,8 @@ function initContactForm() {
         await emailjs.sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, form);
         okEl.hidden = false;
         form.reset();
+        SoundFX.play('chime');
+        launchConfetti();
       } catch { errEl.hidden = false; }
     } else {
       const name = form.querySelector('[name="from_name"]')?.value || '';
@@ -643,6 +650,8 @@ function initContactForm() {
       window.location.href = `mailto:aashutoshg01@gmail.com?subject=${encodeURIComponent(sub)}&body=${encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\n${msg}`)}`;
       okEl.hidden = false;
       form.reset();
+      SoundFX.play('chime');
+      launchConfetti();
     }
 
     btn.innerHTML = origHTML;
@@ -700,24 +709,20 @@ function initCustomCursor() {
    12. TILT EFFECT
 ───────────────────────────────────── */
 function initTiltEffect() {
+  if (window.matchMedia('(pointer: coarse)').matches) return;
   const cards = document.querySelectorAll('.proj-card, .cert-card, .glass-card');
   cards.forEach(card => {
     card.classList.add('tilt-card');
     const inner = card.firstElementChild || card;
     if(inner !== card) inner.classList.add('tilt-card-inner');
-    
     card.addEventListener('mousemove', e => {
       const rect = card.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
-      const rotateX = ((y - centerY) / centerY) * -10;
-      const rotateY = ((x - centerX) / centerX) * 10;
-      
+      const rotateX = ((y - rect.height/2) / (rect.height/2)) * -10;
+      const rotateY = ((x - rect.width/2) / (rect.width/2)) * 10;
       card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
     });
-    
     card.addEventListener('mouseleave', () => {
       card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
     });
@@ -790,19 +795,23 @@ function initThreeJSAvatar() {
   rightOrbital.position.set(2.5, 0, 0);
   bodyGroup.add(rightOrbital);
 
-  // Particles
+  // Particles (Interactive)
   const particleGeom = new THREE.BufferGeometry();
   const particleCount = 200;
   const posArray = new Float32Array(particleCount * 3);
+  const originalPosArray = new Float32Array(particleCount * 3); 
+
   for(let i=0; i<particleCount*3; i++) {
-    posArray[i] = (Math.random() - 0.5) * 20;
+    const p = (Math.random() - 0.5) * 20;
+    posArray[i] = p;
+    originalPosArray[i] = p;
   }
   particleGeom.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
   const particleMat = new THREE.PointsMaterial({
-    size: 0.08,
+    size: 0.1,
     color: 0xc9a84c,
     transparent: true,
-    opacity: 0.6,
+    opacity: 0.8,
     blending: THREE.AdditiveBlending
   });
   const particles = new THREE.Points(particleGeom, particleMat);
@@ -812,24 +821,50 @@ function initThreeJSAvatar() {
   const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
   scene.add(ambientLight);
 
-  const pointLight1 = new THREE.PointLight(0xc9a84c, 2, 50);
+  const pointLight1 = new THREE.PointLight(0xc9a84c, 3, 50);
   pointLight1.position.set(5, 5, 8);
   scene.add(pointLight1);
 
-  const pointLight2 = new THREE.PointLight(0x60a5fa, 2, 50);
+  const pointLight2 = new THREE.PointLight(0x60a5fa, 3, 50);
   pointLight2.position.set(-5, -5, 8);
   scene.add(pointLight2);
 
   // Interaction Tracking
   let mouseX = 0;
   let mouseY = 0;
+  let normalizedMouse = new THREE.Vector2();
   const windowHalfX = window.innerWidth / 2;
   const windowHalfY = window.innerHeight / 2;
   let scrollY = window.scrollY;
 
+  const raycaster = new THREE.Raycaster();
+  let isClicked = false;
+  let clickTime = 0;
+
+  // Add event listeners
   document.addEventListener('mousemove', (event) => {
     mouseX = (event.clientX - windowHalfX);
     mouseY = (event.clientY - windowHalfY);
+    
+    // For Raycaster & Repulsion
+    const rect = container.getBoundingClientRect();
+    if(event.clientX >= rect.left && event.clientX <= rect.right &&
+       event.clientY >= rect.top && event.clientY <= rect.bottom) {
+       normalizedMouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+       normalizedMouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+    }
+  });
+
+  container.addEventListener('click', () => {
+    raycaster.setFromCamera(normalizedMouse, camera);
+    const intersects = raycaster.intersectObjects([head, body, core, leftOrbital, rightOrbital]);
+    if (intersects.length > 0) {
+      isClicked = true;
+      clickTime = clock.getElapsedTime();
+      eyeMat.emissive.setHex(0xf87171);
+      eyeMat.color.setHex(0xef4444);
+      SoundFX.play('whoosh');
+    }
   });
 
   window.addEventListener('scroll', () => {
@@ -855,24 +890,37 @@ function initThreeJSAvatar() {
     bodyGroup.rotation.y += 0.05 * (targetX * 0.5 - bodyGroup.rotation.y);
     bodyGroup.rotation.x += 0.05 * (targetY * 0.5 - bodyGroup.rotation.x);
 
+    // Dynamic Lighting (Lights follow cursor for a flashlight effect)
+    pointLight1.position.x += 0.05 * ((mouseX * 0.02) - pointLight1.position.x);
+    pointLight1.position.y += 0.05 * (-(mouseY * 0.02) - pointLight1.position.y);
+    pointLight2.position.x += 0.05 * (-(mouseX * 0.02) - pointLight2.position.x);
+
+    // Click Reaction Animation (Rapid spin and reset)
+    if (isClicked) {
+      const timeSinceClick = elapsedTime - clickTime;
+      if (timeSinceClick < 1.5) {
+        headGroup.rotation.y += 0.3; // Spin rapidly
+        bodyGroup.rotation.y -= 0.2;
+      } else {
+        isClicked = false;
+        eyeMat.emissive.setHex(0x3b82f6); // Reset to blue
+        eyeMat.color.setHex(0x60a5fa);
+      }
+    }
+
     // 2. Scroll Impact (Exploded View / Sliding Down)
-    // Normalize scroll from 0 to 1 over the first 600px of scroll
     const scrollFactor = Math.min(scrollY / 600, 1);
 
     // Impactful Edits on Scroll
-    // The head flies up and tilts
     headGroup.position.y = 1.5 + (scrollFactor * 3);
     headGroup.rotation.z = scrollFactor * Math.PI / 4;
     
-    // The body flies down and spins
     bodyGroup.position.y = -2 - (scrollFactor * 4);
     bodyGroup.rotation.z = -scrollFactor * Math.PI / 6;
     
-    // Orbitals push outward
     leftOrbital.position.x = -2.5 - (scrollFactor * 3);
     rightOrbital.position.x = 2.5 + (scrollFactor * 3);
 
-    // Camera zooms in slightly on scroll
     camera.position.z = 18 - (scrollFactor * 8);
 
     // 3. Idle Animations
@@ -887,16 +935,275 @@ function initThreeJSAvatar() {
     // Floating effect
     avatar.position.y = Math.sin(elapsedTime * 2) * 0.4 - (scrollFactor * 2);
     
-    particles.rotation.y = elapsedTime * 0.03 + (scrollFactor * 0.5); // Particles spin faster on scroll
+    // Particle Repulsion Effect
+    const positions = particleGeom.attributes.position.array;
+    for(let i=0; i<particleCount; i++) {
+        const px = originalPosArray[i*3];
+        const py = originalPosArray[i*3 + 1];
+        const pz = originalPosArray[i*3 + 2];
+
+        // Repel from mouse target
+        const dx = px - (targetX * 5);
+        const dy = py - (-targetY * 5);
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        
+        if (dist < 3) {
+            positions[i*3] = px + (dx/dist) * (3 - dist);
+            positions[i*3 + 1] = py + (dy/dist) * (3 - dist);
+        } else {
+            // Slowly return to original
+            positions[i*3] += (px - positions[i*3]) * 0.05;
+            positions[i*3 + 1] += (py - positions[i*3 + 1]) * 0.05;
+        }
+    }
+    particleGeom.attributes.position.needsUpdate = true;
+    particles.rotation.y = elapsedTime * 0.03 + (scrollFactor * 0.5); 
 
     renderer.render(scene, camera);
   }
   animate();
 
-  // Resize handler
+  // Resize handler (responsive FOV for mobile)
   window.addEventListener('resize', () => {
-    camera.aspect = container.clientWidth / container.clientHeight;
+    const w = container.clientWidth;
+    const h = container.clientHeight;
+    camera.aspect = w / h;
+    camera.fov = w < 400 ? 55 : w < 700 ? 50 : 45;
     camera.updateProjectionMatrix();
-    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setSize(w, h);
+  });
+}
+
+/* ─────────────────────────────────────
+   14. MAGNETIC BUTTONS
+───────────────────────────────────── */
+function initMagneticButtons() {
+  if (window.matchMedia('(pointer: coarse)').matches) return;
+  const magnets = document.querySelectorAll('.btn-primary, .btn-secondary, .btn-tertiary, .nav-logo');
+  magnets.forEach(magnet => {
+    magnet.addEventListener('mousemove', e => {
+      const rect = magnet.getBoundingClientRect();
+      const x = e.clientX - rect.left - rect.width / 2;
+      const y = e.clientY - rect.top - rect.height / 2;
+      magnet.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+    });
+    magnet.addEventListener('mouseleave', () => {
+      magnet.style.transform = 'translate(0px, 0px)';
+    });
+  });
+}
+
+/* ─────────────────────────────────────
+   15. SOUND FX (Web Audio API)
+───────────────────────────────────── */
+const SoundFX = {
+  ctx: null,
+  enabled: true,
+  unlocked: false,
+  init() {
+    if (this.ctx) return;
+    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    this.unlocked = true;
+  },
+  play(type) {
+    if (!this.enabled || !this.ctx) return;
+    if (this.ctx.state === 'suspended') this.ctx.resume();
+    try { this[type](); } catch(e) {}
+  },
+  tick() {
+    const o = this.ctx.createOscillator();
+    const g = this.ctx.createGain();
+    o.type = 'sine'; o.frequency.value = 3200;
+    g.gain.setValueAtTime(0.06, this.ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.06);
+    o.connect(g); g.connect(this.ctx.destination);
+    o.start(); o.stop(this.ctx.currentTime + 0.06);
+  },
+  pop() {
+    const o = this.ctx.createOscillator();
+    const g = this.ctx.createGain();
+    o.type = 'triangle'; o.frequency.value = 800;
+    o.frequency.exponentialRampToValueAtTime(200, this.ctx.currentTime + 0.1);
+    g.gain.setValueAtTime(0.12, this.ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.12);
+    o.connect(g); g.connect(this.ctx.destination);
+    o.start(); o.stop(this.ctx.currentTime + 0.12);
+  },
+  whoosh() {
+    const bufSize = this.ctx.sampleRate * 0.3;
+    const buf = this.ctx.createBuffer(1, bufSize, this.ctx.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < bufSize; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / bufSize);
+    const src = this.ctx.createBufferSource(); src.buffer = buf;
+    const f = this.ctx.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = 1000;
+    f.frequency.exponentialRampToValueAtTime(200, this.ctx.currentTime + 0.3);
+    const g = this.ctx.createGain();
+    g.gain.setValueAtTime(0.08, this.ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.3);
+    src.connect(f); f.connect(g); g.connect(this.ctx.destination);
+    src.start(); src.stop(this.ctx.currentTime + 0.3);
+  },
+  chime() {
+    [880, 1100].forEach((freq, i) => {
+      const o = this.ctx.createOscillator();
+      const g = this.ctx.createGain();
+      o.type = 'sine'; o.frequency.value = freq;
+      const t = this.ctx.currentTime + i * 0.12;
+      g.gain.setValueAtTime(0.08, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+      o.connect(g); g.connect(this.ctx.destination);
+      o.start(t); o.stop(t + 0.4);
+    });
+  },
+  swoosh() {
+    const o = this.ctx.createOscillator();
+    const g = this.ctx.createGain();
+    o.type = 'sine'; o.frequency.value = 400;
+    o.frequency.exponentialRampToValueAtTime(100, this.ctx.currentTime + 0.15);
+    g.gain.setValueAtTime(0.05, this.ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.15);
+    o.connect(g); g.connect(this.ctx.destination);
+    o.start(); o.stop(this.ctx.currentTime + 0.15);
+  }
+};
+
+function initSoundFX() {
+  // Unlock audio on first user gesture
+  const unlock = () => {
+    SoundFX.init();
+    document.removeEventListener('click', unlock);
+    document.removeEventListener('touchstart', unlock);
+  };
+  document.addEventListener('click', unlock, { once: false });
+  document.addEventListener('touchstart', unlock, { once: false });
+
+  // Hover tick on buttons
+  document.querySelectorAll('.btn-primary, .btn-secondary, .btn-tertiary, .nav-logo, .soc-link').forEach(el => {
+    el.addEventListener('mouseenter', () => SoundFX.play('tick'));
+  });
+
+  // Click pop on buttons
+  document.querySelectorAll('.btn-primary, .btn-secondary, .btn-tertiary, .form-btn').forEach(el => {
+    el.addEventListener('click', () => SoundFX.play('pop'));
+  });
+
+  // Modal swoosh
+  const origOpen = window.openModal;
+  if (typeof origOpen === 'undefined') {
+    // Patch openModal/closeModal inline
+    const _openModal = openModal;
+    window._origOpenModal = _openModal;
+  }
+}
+
+// Patch openModal and closeModal for sound
+const _origOpenModal = openModal;
+openModal = function(modal) {
+  SoundFX.play('swoosh');
+  _origOpenModal(modal);
+};
+const _origCloseModal = closeModal;
+closeModal = function(modal) {
+  SoundFX.play('swoosh');
+  _origCloseModal(modal);
+};
+
+/* ─────────────────────────────────────
+   16. ANIMATED STAT COUNTERS
+───────────────────────────────────── */
+function initAnimatedCounters() {
+  const statNums = document.querySelectorAll('.stat-num');
+  if (!statNums.length) return;
+
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const el = entry.target;
+      const raw = el.textContent.trim();
+      const hasPlus = raw.includes('+');
+      const num = parseFloat(raw);
+      if (isNaN(num)) return;
+      const isDecimal = raw.includes('.');
+      const duration = 1500;
+      const start = performance.now();
+      el.classList.add('counting');
+
+      function step(now) {
+        const progress = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = num * eased;
+        el.textContent = (isDecimal ? current.toFixed(1) : Math.floor(current)) + (hasPlus ? '+' : '');
+        if (progress < 1) requestAnimationFrame(step);
+        else { el.textContent = raw; el.classList.remove('counting'); }
+      }
+      requestAnimationFrame(step);
+      io.unobserve(el);
+    });
+  }, { threshold: 0.5 });
+  statNums.forEach(el => io.observe(el));
+}
+
+/* ─────────────────────────────────────
+   17. SECTION-SPECIFIC REVEALS
+───────────────────────────────────── */
+function initSectionReveals() {
+  // About: text from left, cards from right
+  document.querySelectorAll('#about .about-text').forEach(el => {
+    el.classList.remove('reveal'); el.classList.add('reveal-left');
+  });
+  document.querySelectorAll('#about .about-cards').forEach(el => {
+    el.classList.remove('reveal'); el.classList.add('reveal-right');
+  });
+  // Contact: info from left, form scales in
+  document.querySelectorAll('.contact-info').forEach(el => {
+    el.classList.remove('reveal'); el.classList.add('reveal-left');
+  });
+  document.querySelectorAll('.contact-form').forEach(el => {
+    el.classList.remove('reveal'); el.classList.add('reveal-scale');
+  });
+
+  // Observe all new reveal types
+  const allReveals = document.querySelectorAll('.reveal-left, .reveal-right, .reveal-scale, .reveal-up');
+  const io = new IntersectionObserver(entries => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 100);
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.07, rootMargin: '0px 0px -40px 0px' });
+  allReveals.forEach(el => io.observe(el));
+}
+
+/* ─────────────────────────────────────
+   18. CONFETTI (on form success)
+───────────────────────────────────── */
+function launchConfetti() {
+  const container = document.createElement('div');
+  container.className = 'confetti-container';
+  document.body.appendChild(container);
+  const colors = ['#c9a84c', '#e6c97a', '#60a5fa', '#4ade80', '#f472b6', '#a78bfa'];
+  for (let i = 0; i < 50; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.left = Math.random() * 100 + '%';
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.animationDelay = Math.random() * 0.5 + 's';
+    piece.style.animationDuration = (2 + Math.random() * 2) + 's';
+    container.appendChild(piece);
+  }
+  setTimeout(() => container.remove(), 4000);
+}
+
+/* ─────────────────────────────────────
+   19. SOUND TOGGLE
+───────────────────────────────────── */
+function initSoundToggle() {
+  const btn = document.getElementById('sound-toggle');
+  if (!btn) return;
+  btn.addEventListener('click', () => {
+    SoundFX.enabled = !SoundFX.enabled;
+    btn.classList.toggle('muted', !SoundFX.enabled);
+    if (SoundFX.enabled) { SoundFX.init(); SoundFX.play('tick'); }
   });
 }
