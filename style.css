@@ -421,7 +421,7 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:64px 0 40px
   #hero{padding:110px 36px 70px}
   .hero-body{gap:48px}
   .hero-visual{width:340px;height:420px}
-  .photo-wrap{width:260px;height:260px}
+  .photo-wrap{width:300px;height:300px}
   .float-card-1{top:0%;left:-6%}
   .float-card-2{bottom:6%;right:-4%}
   .float-card-3{bottom:0%;left:-2%}
@@ -539,4 +539,282 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:64px 0 40px
 }
 .tilt-card-inner {
   transform: translateZ(30px);
+}
+
+/* ── SECTION DIVIDERS (animated shimmer lines between sections) ── */
+.section-divider {
+  position: relative;
+  height: 1px;
+  margin: 0;
+  border: none;
+  background: linear-gradient(90deg, transparent 0%, var(--gold) 25%, var(--gold2) 50%, var(--gold) 75%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmerDivider 4s linear infinite;
+  opacity: 0.3;
+}
+.section-divider::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 8px;
+  background: var(--gold);
+  border-radius: 50%;
+  box-shadow: 0 0 12px var(--gold-glow), 0 0 24px rgba(201,168,76,0.15);
+}
+@keyframes shimmerDivider {
+  to { background-position: -200% 0; }
+}
+
+/* ── STAGGERED REVEAL VARIANTS ── */
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-60px) rotate(-2deg);
+  transition: opacity .8s var(--ease), transform .8s var(--ease);
+}
+.reveal-left.visible { opacity: 1; transform: none; }
+
+.reveal-right {
+  opacity: 0;
+  transform: translateX(60px) rotate(2deg);
+  transition: opacity .8s var(--ease), transform .8s var(--ease);
+}
+.reveal-right.visible { opacity: 1; transform: none; }
+
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.85) translateY(20px);
+  transition: opacity .7s var(--ease), transform .7s var(--ease);
+}
+.reveal-scale.visible { opacity: 1; transform: none; }
+
+.reveal-up {
+  opacity: 0;
+  transform: translateY(50px);
+  transition: opacity .7s var(--ease), transform .7s var(--ease);
+}
+.reveal-up.visible { opacity: 1; transform: none; }
+
+/* ── ANIMATED STAT COUNTER ── */
+.stat-num.counting {
+  color: var(--gold3);
+  text-shadow: 0 0 16px var(--gold-glow);
+}
+
+/* ── ABOUT SECTION UPGRADE ── */
+#about .about-grid {
+  position: relative;
+}
+#about .about-text {
+  position: relative;
+}
+#about .about-text::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  width: 60px;
+  height: 60px;
+  border-left: 2px solid var(--gold);
+  border-top: 2px solid var(--gold);
+  opacity: 0.2;
+  pointer-events: none;
+}
+#about .about-cards {
+  position: relative;
+}
+
+/* ── SKILLS SECTION UPGRADE ── */
+.sk-card {
+  transition: border-color .35s, transform .4s var(--spring), box-shadow .4s, opacity .7s var(--ease);
+}
+.sk-card .sk-header::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 60px;
+  height: 60px;
+  background: radial-gradient(circle at top right, color-mix(in srgb, var(--sk-color, var(--gold)) 10%, transparent), transparent 70%);
+  pointer-events: none;
+}
+
+/* ── CONTACT SECTION UPGRADE ── */
+.contact-form {
+  position: relative;
+  overflow: hidden;
+}
+.contact-form::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--bdr-gold), transparent);
+}
+
+/* Floating label effect */
+.field.floating-label {
+  position: relative;
+}
+.field.floating-label label {
+  position: absolute;
+  top: 13px;
+  left: 16px;
+  transition: all 0.3s var(--ease);
+  pointer-events: none;
+  z-index: 1;
+  background: transparent;
+}
+.field.floating-label input:focus + label,
+.field.floating-label textarea:focus + label,
+.field.floating-label input:not(:placeholder-shown) + label,
+.field.floating-label textarea:not(:placeholder-shown) + label {
+  display: none;
+}
+
+/* Form input glow on focus */
+.field input:focus,
+.field textarea:focus {
+  border-color: var(--gold);
+  background: rgba(201,168,76,.06);
+  box-shadow: 0 0 0 3px rgba(201,168,76,.12), 0 0 20px rgba(201,168,76,.06);
+}
+
+/* Submit button pulse glow */
+.form-btn {
+  animation: btnPulseGlow 3s ease-in-out infinite;
+}
+@keyframes btnPulseGlow {
+  0%, 100% { box-shadow: 0 4px 20px rgba(201,168,76,0.2); }
+  50% { box-shadow: 0 4px 36px rgba(201,168,76,0.45), 0 0 60px rgba(201,168,76,0.15); }
+}
+.form-btn:hover {
+  animation: none;
+}
+
+/* Confetti container */
+.confetti-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10001;
+  overflow: hidden;
+}
+.confetti-piece {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  top: -10px;
+  animation: confettiFall 3s ease-out forwards;
+}
+@keyframes confettiFall {
+  0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg) scale(0.3); opacity: 0; }
+}
+
+/* ── MOBILE MENU STAGGER ANIMATIONS ── */
+.mob-nav.open .mob-links a {
+  animation: mobLinkSlide 0.5s var(--ease) both;
+}
+.mob-nav.open .mob-links a:nth-child(1) { animation-delay: 0.05s; }
+.mob-nav.open .mob-links a:nth-child(2) { animation-delay: 0.1s; }
+.mob-nav.open .mob-links a:nth-child(3) { animation-delay: 0.15s; }
+.mob-nav.open .mob-links a:nth-child(4) { animation-delay: 0.2s; }
+.mob-nav.open .mob-links a:nth-child(5) { animation-delay: 0.25s; }
+.mob-nav.open .mob-hire {
+  animation: mobLinkSlide 0.5s var(--ease) 0.3s both;
+}
+@keyframes mobLinkSlide {
+  from { opacity: 0; transform: translateX(40px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* ── TOUCH DEVICE OVERRIDES ── */
+@media (pointer: coarse) {
+  /* No custom cursor on touch */
+  body { cursor: auto; }
+  a, button, input, textarea, [role="button"], .proj-card, .cert-card { cursor: auto; }
+  #cursor-dot, #cursor-glow { display: none !important; }
+  
+  /* No tilt on touch */
+  .tilt-card {
+    transform: none !important;
+  }
+  
+  /* Bigger tap targets */
+  .nav-links a { padding: 8px 4px; }
+  .btn-primary, .btn-secondary, .btn-tertiary { min-height: 48px; }
+  .cinfo-item { padding: 18px; }
+  .cert-card { padding: 28px; }
+  .tag { padding: 8px 14px; }
+  .form-btn { min-height: 52px; }
+  
+  /* Disable pulse glow on mobile (save battery) */
+  .form-btn { animation: none; }
+}
+
+/* ── 3D CANVAS MOBILE REFINEMENTS ── */
+@media (max-width: 900px) {
+  .hero-visual {
+    width: 280px;
+    height: 340px;
+    margin: 0 auto;
+  }
+  .photo-wrap {
+    width: 280px;
+    height: 280px;
+  }
+  #hero-3d-canvas canvas {
+    filter: drop-shadow(0 0 15px rgba(201,168,76,0.15));
+  }
+}
+@media (max-width: 640px) {
+  .hero-visual {
+    width: 240px;
+    height: 280px;
+  }
+  .photo-wrap {
+    width: 240px;
+    height: 240px;
+  }
+}
+
+/* ── SOUND TOGGLE BUTTON ── */
+#sound-toggle {
+  position: fixed;
+  bottom: 28px;
+  left: 28px;
+  z-index: 999;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--surface2);
+  border: 1px solid var(--bdr);
+  color: var(--t2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.3s var(--spring);
+  backdrop-filter: blur(8px);
+}
+#sound-toggle:hover {
+  background: var(--gold-dim);
+  border-color: var(--bdr-gold);
+  color: var(--gold2);
+  transform: scale(1.1);
+}
+#sound-toggle.muted {
+  color: var(--t3);
+  opacity: 0.6;
+}
+#sound-toggle svg {
+  width: 16px;
+  height: 16px;
 }
