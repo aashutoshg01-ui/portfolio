@@ -737,8 +737,8 @@ function initThreeJSAvatar() {
   if (!container || typeof THREE === 'undefined') return;
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-  camera.position.z = 18;
+  const camera = new THREE.PerspectiveCamera(40, container.clientWidth / container.clientHeight, 0.1, 1000);
+  camera.position.z = 16;
 
   const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
   renderer.setSize(container.clientWidth, container.clientHeight);
@@ -751,83 +751,136 @@ function initThreeJSAvatar() {
 
   // 1. Robot Head
   const headGroup = new THREE.Group();
-  headGroup.position.y = 1.5;
+  headGroup.position.y = 2;
   avatar.add(headGroup);
 
-  const headGeom = new THREE.BoxGeometry(2.2, 1.8, 2.2);
-  const headMat = new THREE.MeshPhysicalMaterial({ color: 0x0f172a, metalness: 0.9, roughness: 0.1, clearcoat: 1.0 });
+  const headGeom = new THREE.BoxGeometry(2.8, 2.2, 2.8);
+  const headMat = new THREE.MeshPhysicalMaterial({ color: 0x0a1025, metalness: 0.95, roughness: 0.05, clearcoat: 1.0, clearcoatRoughness: 0.1 });
   const head = new THREE.Mesh(headGeom, headMat);
   headGroup.add(head);
 
-  // Robot Eye (Glowing)
-  const eyeGeom = new THREE.CylinderGeometry(0.6, 0.6, 0.2, 32);
-  eyeGeom.rotateX(Math.PI / 2);
-  const eyeMat = new THREE.MeshStandardMaterial({ color: 0x60a5fa, emissive: 0x3b82f6, emissiveIntensity: 2 });
-  const eye = new THREE.Mesh(eyeGeom, eyeMat);
-  eye.position.set(0, 0.2, 1.15);
-  headGroup.add(eye);
+  // Head edge glow
+  const headEdge = new THREE.Mesh(new THREE.BoxGeometry(2.85, 2.25, 2.85), new THREE.MeshBasicMaterial({ color: 0xc9a84c, wireframe: true, transparent: true, opacity: 0.15 }));
+  headGroup.add(headEdge);
 
-  // 2. Robot Body (Floating Pyramid/Prism)
+  // Antenna
+  const antennaPole = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 1.2, 8), new THREE.MeshStandardMaterial({ color: 0x60a5fa, metalness: 0.8 }));
+  antennaPole.position.set(0, 1.7, 0);
+  headGroup.add(antennaPole);
+  const antennaBall = new THREE.Mesh(new THREE.SphereGeometry(0.18, 16, 16), new THREE.MeshStandardMaterial({ color: 0x60a5fa, emissive: 0x3b82f6, emissiveIntensity: 3 }));
+  antennaBall.position.set(0, 2.4, 0);
+  headGroup.add(antennaBall);
+
+  // Robot Eye (Glowing) - bigger and brighter
+  const eyeGeom = new THREE.CylinderGeometry(0.8, 0.8, 0.2, 32);
+  eyeGeom.rotateX(Math.PI / 2);
+  const eyeMat = new THREE.MeshStandardMaterial({ color: 0x60a5fa, emissive: 0x3b82f6, emissiveIntensity: 4 });
+  const eye = new THREE.Mesh(eyeGeom, eyeMat);
+  eye.position.set(0, 0.15, 1.45);
+  headGroup.add(eye);
+  // Eye inner pupil
+  const pupil = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.22, 32), new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 2 }));
+  pupil.rotation.x = Math.PI / 2;
+  pupil.position.set(0, 0.15, 1.48);
+  headGroup.add(pupil);
+
+  // Rotating ring halo around head
+  const ringGeom = new THREE.TorusGeometry(2.2, 0.06, 16, 64);
+  const ringMat = new THREE.MeshStandardMaterial({ color: 0xc9a84c, emissive: 0xc9a84c, emissiveIntensity: 1.5, metalness: 0.8 });
+  const headRing = new THREE.Mesh(ringGeom, ringMat);
+  headRing.rotation.x = Math.PI / 2;
+  headGroup.add(headRing);
+  // Second ring
+  const headRing2 = new THREE.Mesh(new THREE.TorusGeometry(2.6, 0.04, 16, 64), new THREE.MeshStandardMaterial({ color: 0x60a5fa, emissive: 0x60a5fa, emissiveIntensity: 1, transparent: true, opacity: 0.6 }));
+  headRing2.rotation.x = Math.PI / 3;
+  headGroup.add(headRing2);
+
+  // 2. Robot Body (Dual layer - solid core + wireframe shell)
   const bodyGroup = new THREE.Group();
-  bodyGroup.position.y = -2;
+  bodyGroup.position.y = -2.5;
   avatar.add(bodyGroup);
 
-  const bodyGeom = new THREE.ConeGeometry(1.8, 3.5, 4);
+  const bodyGeom = new THREE.ConeGeometry(2.2, 4, 4);
   const bodyMat = new THREE.MeshStandardMaterial({ color: 0xc9a84c, metalness: 0.7, roughness: 0.3, wireframe: true });
   const body = new THREE.Mesh(bodyGeom, bodyMat);
   bodyGroup.add(body);
+  // Solid inner body
+  const bodyInner = new THREE.Mesh(new THREE.ConeGeometry(1.5, 3.2, 4), new THREE.MeshPhysicalMaterial({ color: 0x0a1025, metalness: 0.9, roughness: 0.1, clearcoat: 0.8 }));
+  bodyGroup.add(bodyInner);
 
-  // Inner Core inside Body
-  const coreGeom = new THREE.OctahedronGeometry(1, 0);
-  const coreMat = new THREE.MeshStandardMaterial({ color: 0xc9a84c, emissive: 0x4a3a10, emissiveIntensity: 1 });
+  // Inner Core - larger and brighter
+  const coreGeom = new THREE.OctahedronGeometry(1.2, 1);
+  const coreMat = new THREE.MeshStandardMaterial({ color: 0xc9a84c, emissive: 0xc9a84c, emissiveIntensity: 2 });
   const core = new THREE.Mesh(coreGeom, coreMat);
   bodyGroup.add(core);
 
-  // 3. Floating Orbitals (Shoulders/Hands)
-  const orbitalGeom = new THREE.IcosahedronGeometry(0.6, 0);
-  const orbitalMat = new THREE.MeshStandardMaterial({ color: 0x60a5fa, metalness: 0.5, roughness: 0.2 });
-  
+  // 3. Floating Orbitals - bigger with glow
+  const orbitalGeom = new THREE.IcosahedronGeometry(0.8, 1);
+  const orbitalMat = new THREE.MeshStandardMaterial({ color: 0x60a5fa, emissive: 0x3b82f6, emissiveIntensity: 1.5, metalness: 0.5, roughness: 0.2 });
   const leftOrbital = new THREE.Mesh(orbitalGeom, orbitalMat);
-  leftOrbital.position.set(-2.5, 0, 0);
+  leftOrbital.position.set(-3, 0, 0);
   bodyGroup.add(leftOrbital);
-
   const rightOrbital = new THREE.Mesh(orbitalGeom, orbitalMat);
-  rightOrbital.position.set(2.5, 0, 0);
+  rightOrbital.position.set(3, 0, 0);
   bodyGroup.add(rightOrbital);
 
-  // Particles (Interactive)
+  // Orbital connecting beams (energy lines)
+  const beamMat = new THREE.MeshBasicMaterial({ color: 0x60a5fa, transparent: true, opacity: 0.3 });
+  const leftBeam = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 3, 8), beamMat);
+  leftBeam.rotation.z = Math.PI / 2; leftBeam.position.set(-1.5, 0, 0);
+  bodyGroup.add(leftBeam);
+  const rightBeam = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 3, 8), beamMat);
+  rightBeam.rotation.z = Math.PI / 2; rightBeam.position.set(1.5, 0, 0);
+  bodyGroup.add(rightBeam);
+
+  // Particles (Interactive) - MORE and BIGGER
   const particleGeom = new THREE.BufferGeometry();
-  const particleCount = 200;
+  const particleCount = 500;
   const posArray = new Float32Array(particleCount * 3);
   const originalPosArray = new Float32Array(particleCount * 3); 
 
   for(let i=0; i<particleCount*3; i++) {
-    const p = (Math.random() - 0.5) * 20;
+    const p = (Math.random() - 0.5) * 24;
     posArray[i] = p;
     originalPosArray[i] = p;
   }
   particleGeom.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
   const particleMat = new THREE.PointsMaterial({
-    size: 0.1,
+    size: 0.15,
     color: 0xc9a84c,
     transparent: true,
-    opacity: 0.8,
+    opacity: 0.9,
     blending: THREE.AdditiveBlending
   });
   const particles = new THREE.Points(particleGeom, particleMat);
   scene.add(particles);
 
-  // Lighting
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-  scene.add(ambientLight);
+  // Secondary blue particles
+  const particleGeom2 = new THREE.BufferGeometry();
+  const pCount2 = 200;
+  const posArray2 = new Float32Array(pCount2 * 3);
+  for(let i=0; i<pCount2*3; i++) posArray2[i] = (Math.random() - 0.5) * 18;
+  particleGeom2.setAttribute('position', new THREE.BufferAttribute(posArray2, 3));
+  const particles2 = new THREE.Points(particleGeom2, new THREE.PointsMaterial({ size: 0.08, color: 0x60a5fa, transparent: true, opacity: 0.7, blending: THREE.AdditiveBlending }));
+  scene.add(particles2);
 
-  const pointLight1 = new THREE.PointLight(0xc9a84c, 3, 50);
+  // Lighting - MUCH stronger
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+  scene.add(ambientLight);
+  const pointLight1 = new THREE.PointLight(0xc9a84c, 5, 60);
   pointLight1.position.set(5, 5, 8);
   scene.add(pointLight1);
-
-  const pointLight2 = new THREE.PointLight(0x60a5fa, 3, 50);
+  const pointLight2 = new THREE.PointLight(0x60a5fa, 5, 60);
   pointLight2.position.set(-5, -5, 8);
   scene.add(pointLight2);
+  // Rim light from behind
+  const rimLight = new THREE.PointLight(0xc9a84c, 4, 40);
+  rimLight.position.set(0, 3, -8);
+  scene.add(rimLight);
+  // Bottom fill
+  const bottomLight = new THREE.PointLight(0x60a5fa, 2, 30);
+  bottomLight.position.set(0, -6, 4);
+  scene.add(bottomLight);
 
   // Interaction Tracking
   let mouseX = 0;
@@ -918,22 +971,47 @@ function initThreeJSAvatar() {
     bodyGroup.position.y = -2 - (scrollFactor * 4);
     bodyGroup.rotation.z = -scrollFactor * Math.PI / 6;
     
-    leftOrbital.position.x = -2.5 - (scrollFactor * 3);
-    rightOrbital.position.x = 2.5 + (scrollFactor * 3);
+    leftOrbital.position.x = -3 - (scrollFactor * 3);
+    rightOrbital.position.x = 3 + (scrollFactor * 3);
 
-    camera.position.z = 18 - (scrollFactor * 8);
+    camera.position.z = 16 - (scrollFactor * 6);
 
     // 3. Idle Animations
-    core.rotation.y = elapsedTime;
-    core.rotation.x = elapsedTime * 0.5;
+    core.rotation.y = elapsedTime * 1.5;
+    core.rotation.x = elapsedTime * 0.7;
+    core.scale.setScalar(1 + Math.sin(elapsedTime * 3) * 0.08);
     
-    leftOrbital.rotation.x = elapsedTime;
-    leftOrbital.rotation.y = elapsedTime;
-    rightOrbital.rotation.x = -elapsedTime;
-    rightOrbital.rotation.y = -elapsedTime;
+    // Ring rotations
+    headRing.rotation.z = elapsedTime * 0.8;
+    headRing2.rotation.z = -elapsedTime * 0.5;
+    headRing2.rotation.y = elapsedTime * 0.3;
     
-    // Floating effect
-    avatar.position.y = Math.sin(elapsedTime * 2) * 0.4 - (scrollFactor * 2);
+    // Antenna pulse
+    antennaBall.scale.setScalar(1 + Math.sin(elapsedTime * 4) * 0.3);
+    
+    // Pupil pulse
+    pupil.scale.setScalar(0.8 + Math.sin(elapsedTime * 2) * 0.2);
+    
+    // Beam pulsing opacity
+    beamMat.opacity = 0.15 + Math.sin(elapsedTime * 3) * 0.15;
+    
+    leftOrbital.rotation.x = elapsedTime * 1.2;
+    leftOrbital.rotation.y = elapsedTime * 1.2;
+    rightOrbital.rotation.x = -elapsedTime * 1.2;
+    rightOrbital.rotation.y = -elapsedTime * 1.2;
+    
+    // Orbital orbit (they circle the body)
+    leftOrbital.position.x = -3 * Math.cos(elapsedTime * 0.8);
+    leftOrbital.position.z = 3 * Math.sin(elapsedTime * 0.8);
+    rightOrbital.position.x = 3 * Math.cos(elapsedTime * 0.8);
+    rightOrbital.position.z = -3 * Math.sin(elapsedTime * 0.8);
+    
+    // Floating effect - more pronounced
+    avatar.position.y = Math.sin(elapsedTime * 1.5) * 0.6 - (scrollFactor * 2);
+    
+    // Blue particles rotation
+    particles2.rotation.y = -elapsedTime * 0.05;
+    particles2.rotation.x = Math.sin(elapsedTime * 0.3) * 0.1;
     
     // Particle Repulsion Effect
     const positions = particleGeom.attributes.position.array;
