@@ -18,10 +18,31 @@
   <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" as="style">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <link rel="preload" href="style.css" as="style">
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <link rel="stylesheet" href="style.css">
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Aashutosh Kumar Gupta",
+    "url": "https://aashutoshkumargupta.netlify.app/",
+    "jobTitle": "Software Developer",
+    "alumniOf": {
+      "@type": "CollegeOrUniversity",
+      "name": "KIIT University"
+    },
+    "knowsAbout": ["Python", "Java", "Flutter", "AI/ML", "Web Development"],
+    "sameAs": [
+      "https://www.linkedin.com/in/aashutosh-gupta-b6b7453a6",
+      "https://github.com/aashutoshg01-ui"
+    ]
+  }
+  </script>
 </head>
 <body>
 
@@ -191,6 +212,8 @@
   </div>
 </section>
 
+<hr class="section-divider" aria-hidden="true">
+
 <!-- ═══════ ABOUT ═══════ -->
 <section id="about">
   <div class="wrap">
@@ -242,6 +265,8 @@
     </div>
   </div>
 </section>
+
+<hr class="section-divider" aria-hidden="true">
 
 <!-- ═══════ SKILLS ═══════ -->
 <section id="skills" class="alt-section">
@@ -314,6 +339,8 @@
   </div>
 </section>
 
+<hr class="section-divider" aria-hidden="true">
+
 <!-- ═══════ CERTIFICATIONS ═══════ -->
 <section id="certifications" class="alt-section">
   <div class="wrap">
@@ -349,6 +376,8 @@
     </div>
   </div>
 </section>
+
+<hr class="section-divider" aria-hidden="true">
 
 <!-- ═══════ CONTACT ═══════ -->
 <section id="contact" class="alt-section">
@@ -416,7 +445,7 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <p>© 2025 Aashutosh Kumar Gupta. All rights reserved.</p>
+        <p>© 2026 Aashutosh Kumar Gupta. All rights reserved.</p>
         <p class="footer-made">Designed &amp; Built with <span>♥</span></p>
       </div>
     </div>
@@ -425,6 +454,15 @@
 
 <button id="btt" aria-label="Back to top" title="Back to top">
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+
+<!-- Sound Toggle -->
+<button id="sound-toggle" aria-label="Toggle sound effects" title="Toggle sound effects">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+    <path d="M19.07 4.93a10 10 0 0 1 0 14.14" class="sound-wave-1"/>
+    <path d="M15.54 8.46a5 5 0 0 1 0 7.07" class="sound-wave-2"/>
+  </svg>
 </button>
 
 <script src="data.js"></script>
