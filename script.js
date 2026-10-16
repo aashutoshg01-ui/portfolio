@@ -635,24 +635,20 @@ function initContactForm() {
     btn.disabled = true;
 
     if (configured) {
-      try {
-        await emailjs.sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, form);
-        okEl.hidden = false;
-        form.reset();
-        SoundFX.play('chime');
-        launchConfetti();
-      } catch { errEl.hidden = false; }
-    } else {
-      const name = form.querySelector('[name="from_name"]')?.value || '';
-      const email= form.querySelector('[name="from_email"]')?.value || '';
-      const sub  = form.querySelector('[name="subject"]')?.value || 'Portfolio Inquiry';
-      const msg  = form.querySelector('[name="message"]')?.value || '';
-      window.location.href = `mailto:aashutoshg01@gmail.com?subject=${encodeURIComponent(sub)}&body=${encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\n${msg}`)}`;
-      okEl.hidden = false;
-      form.reset();
-      SoundFX.play('chime');
-      launchConfetti();
-    }
+  try {
+    await emailjs.sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, form);
+    okEl.hidden = false;
+    form.reset();
+    SoundFX.play('chime');
+    launchConfetti();
+  } catch (err) {
+    console.error('EmailJS error:', err);
+    errEl.hidden = false;
+  }
+} else {
+  console.error('EmailJS is not configured');
+  errEl.hidden = false;
+}
 
     btn.innerHTML = origHTML;
     btn.disabled = false;
