@@ -21,9 +21,9 @@
    ================================================================ */
 'use strict';
 
-const EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';
-const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';
-const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';
+const EMAILJS_PUBLIC_KEY  = 'mBsXpSBqM6WdnQmGd';
+const EMAILJS_SERVICE_ID  = 'service_fjuob8c';
+const EMAILJS_TEMPLATE_ID = 'template_2vmtbkn';
 
 /* ── Icons (inline SVGs used in modals) ── */
 const ICON = {
